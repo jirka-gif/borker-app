@@ -54,14 +54,14 @@ export function AiSuggestField({
   return (
     <div className="w-full">
       <div className="mb-1.5 flex items-center justify-between gap-3">
-        <label className="text-sm font-medium text-foreground">{label}</label>
+        <label className="min-w-0 text-sm font-medium text-foreground">{label}</label>
         <button
           type="button"
           onClick={() => generate(suggestion ? variant + 1 : variant)}
           disabled={loading}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-brand-600 px-2.5 py-1 text-xs font-medium text-brand-600 transition-colors hover:bg-brand-50 disabled:opacity-60"
+          className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg border border-brand-600 px-2.5 py-1 text-xs font-medium text-brand-600 transition-colors hover:bg-brand-50 disabled:opacity-60"
         >
-          <Sparkles className={`h-3.5 w-3.5 ${loading ? 'animate-pulse' : ''}`} />
+          <Sparkles className={`h-3.5 w-3.5 shrink-0 ${loading ? 'animate-pulse' : ''}`} />
           {loading ? 'Generuji…' : 'Navrhnout s AI'}
         </button>
       </div>

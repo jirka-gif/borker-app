@@ -402,7 +402,7 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                   {/* Umístění bytu */}
                   <div className="mt-4 mb-4 w-full sm:w-[calc((100%-1rem)/2)]">
                     <label className="block text-sm font-medium text-brand-900 mb-2">Umístění bytu</label>
-                    <div className="relative flex items-center bg-surface-muted rounded-full p-1 w-full">
+                    <div className="relative flex flex-col sm:flex-row sm:items-center bg-surface-muted rounded-2xl sm:rounded-full p-1 w-full">
                       <button
                         type="button"
                         onClick={() => handleChange('apartmentLocation', 'rodinny-dum')}
