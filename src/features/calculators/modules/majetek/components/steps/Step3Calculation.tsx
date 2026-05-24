@@ -133,7 +133,7 @@ export default function Step3Calculation({ formData, onDataChange, onNext, onBac
     <div className="space-y-8">
       {/* Offer Details Section - Three Cards in One Box */}
       <div className="bg-surface rounded-xl shadow-sm p-8 mb-6">
-        <div className="grid grid-cols-3 gap-6 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
           {/* Nabídka pojištění */}
           <div className="bg-surface rounded-lg p-6 border border-border">
             <div className="flex items-center gap-2 mb-4">
@@ -193,7 +193,7 @@ export default function Step3Calculation({ formData, onDataChange, onNext, onBac
       <h2 className="text-xl font-semibold text-foreground mb-6">Nabídky pojistitelů</h2>
 
       {/* Insurance Offers */}
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {selectedOffers.map((offer, index) => {
           const totalPrice = calculateTotalPrice(offer)
           return (
@@ -310,8 +310,8 @@ export default function Step3Calculation({ formData, onDataChange, onNext, onBac
       </div>
 
       {/* Frequency and Actions Box */}
-      <div className="bg-surface rounded-xl shadow-sm p-8">
-        <div className="flex gap-4 items-center justify-between">
+      <div className="bg-surface rounded-xl shadow-sm p-5 sm:p-8">
+        <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
           <div className="flex gap-4 items-center">
             <label className="text-sm text-brand-900 whitespace-nowrap">Frekvence platby:</label>
             <select
@@ -325,7 +325,7 @@ export default function Step3Calculation({ formData, onDataChange, onNext, onBac
               <option value="měsíčně">Měsíčně</option>
             </select>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             <button className="px-4 py-2 border border-brand-600 rounded-lg hover:bg-brand-50 transition-colors flex items-center gap-2 text-sm text-brand-600 h-[42px]">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />

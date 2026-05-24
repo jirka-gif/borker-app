@@ -520,16 +520,16 @@ export const VehicleInsuranceCalculationPage: React.FC<VehicleInsuranceCalculati
               </span>
             </div>
           </div>
-          <div className="flex gap-3">
+          <div className="flex w-full flex-col gap-3 sm:flex-row md:w-auto">
             <button
               type="button"
-              className="px-4 py-2.5 border border-[#A82844] text-[#A82844] rounded-lg hover:bg-brand-50 transition-colors text-sm font-medium whitespace-nowrap min-w-[160px]"
+              className="px-4 py-2.5 border border-[#A82844] text-[#A82844] rounded-lg hover:bg-brand-50 transition-colors text-sm font-medium whitespace-nowrap sm:min-w-[160px]"
             >
               Odeslat emailem
             </button>
             <button
               type="button"
-              className="px-4 py-2.5 border border-[#A82844] text-[#A82844] rounded-lg hover:bg-brand-50 transition-colors text-sm font-medium whitespace-nowrap min-w-[160px]"
+              className="px-4 py-2.5 border border-[#A82844] text-[#A82844] rounded-lg hover:bg-brand-50 transition-colors text-sm font-medium whitespace-nowrap sm:min-w-[160px]"
             >
               Stáhnout PDF
             </button>

@@ -36,7 +36,7 @@ export default function Step1BasicInfo({ formData, onDataChange, onNext }: Step1
       <div>
         {/* Datepicker a Náhrada smlouvy - připojený box */}
         <div className="bg-surface rounded-xl border border-border shadow-sm p-6">
-        <div className="flex items-end justify-between gap-8">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 sm:gap-8">
           {/* Datum počátku pojištění */}
           <div>
             <label className="block text-sm font-medium text-brand-900 mb-2">
@@ -46,8 +46,7 @@ export default function Step1BasicInfo({ formData, onDataChange, onNext }: Step1
               type="date"
               value={formData.insuranceStartDate ? formatDateForDateInput(formData.insuranceStartDate) : ''}
               onChange={(e) => handleChange('insuranceStartDate', e.target.value)}
-              className="px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-sm h-[42px]"
-              style={{ width: '180px' }}
+              className="w-full sm:w-[180px] px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-sm h-[42px]"
             />
           </div>
 
@@ -87,7 +86,7 @@ export default function Step1BasicInfo({ formData, onDataChange, onNext }: Step1
         {formData.contractReplacement && (
           <>
             <div className="border-t border-border my-6"></div>
-            <div className="grid grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8">
               {/* Číslo smlouvy */}
               <div>
                 <label className="block text-sm font-medium text-brand-900 mb-2">
@@ -132,7 +131,7 @@ export default function Step1BasicInfo({ formData, onDataChange, onNext }: Step1
         {/* Typ osoby - Segmented control */}
         <div className="mb-6 border border-border rounded-xl p-4">
           <label className="block text-sm font-medium text-brand-900 mb-3">Typ</label>
-          <div className="relative flex items-center bg-surface-muted rounded-full p-1 w-full">
+          <div className="relative flex flex-col sm:flex-row sm:items-center bg-surface-muted rounded-2xl sm:rounded-full p-1 w-full">
             {[
               { value: 'obcan', label: 'Občan', mapValue: 'fyzicka' },
               { value: 'podnikatel', label: 'Fyzická osoba podnikatel', mapValue: 'podnikatel' },
@@ -167,13 +166,13 @@ export default function Step1BasicInfo({ formData, onDataChange, onNext }: Step1
               <label className="block text-sm font-medium text-brand-900 mb-2">
                 IČO
               </label>
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <input
                   type="text"
                   value={formData.ico || ''}
                   onChange={(e) => handleChange('ico', e.target.value)}
                   placeholder="Např. 18628443"
-                  className="w-[calc(25%-0.375rem)] px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent h-[42px]"
+                  className="w-full sm:w-[calc(25%-0.375rem)] px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent h-[42px]"
                 />
                 <button
                   type="button"
@@ -202,7 +201,7 @@ export default function Step1BasicInfo({ formData, onDataChange, onNext }: Step1
             </div>
 
             {/* Jméno a tituly - 4 nebo 5 columns (5 pro Právnická osoba) */}
-            <div className={`grid gap-3 mb-6 ${formData.personType === 'pravnicka' ? 'grid-cols-5' : 'grid-cols-4'}`}>
+            <div className={`grid gap-3 mb-6 grid-cols-1 sm:grid-cols-2 ${formData.personType === 'pravnicka' ? 'lg:grid-cols-5' : 'lg:grid-cols-4'}`}>
               {formData.personType === 'pravnicka' && (
                 <div>
                   <label className="block text-sm font-medium text-brand-900 mb-2">Pozice ve společnosti</label>
@@ -268,13 +267,13 @@ export default function Step1BasicInfo({ formData, onDataChange, onNext }: Step1
               <label className="block text-sm font-medium text-brand-900 mb-2">
                 Rodné číslo (nepovinný údaj)
               </label>
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <input
                   type="text"
                   value={formData.personalId}
                   onChange={(e) => handleChange('personalId', e.target.value)}
                   placeholder="Např. 7812227665"
-                  className="w-[calc(25%-0.375rem)] px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent h-[42px]"
+                  className="w-full sm:w-[calc(25%-0.375rem)] px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent h-[42px]"
                 />
                 <button
                   type="button"
@@ -302,7 +301,7 @@ export default function Step1BasicInfo({ formData, onDataChange, onNext }: Step1
                     type="date"
                     value={formData.birthDate ? formatDateForDateInput(formData.birthDate) : ''}
                     onChange={(e) => handleChange('birthDate', e.target.value)}
-                    className="w-[calc(25%-0.375rem)] px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-sm h-[42px]"
+                    className="w-full sm:w-[calc(25%-0.375rem)] px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-sm h-[42px]"
                   />
                 </>
               ) : (
@@ -310,13 +309,13 @@ export default function Step1BasicInfo({ formData, onDataChange, onNext }: Step1
                   <label className="block text-sm font-medium text-brand-900 mb-2">
                     Rodné číslo
                   </label>
-                  <div className="flex gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <input
                       type="text"
                       value={formData.personalId}
                       onChange={(e) => handleChange('personalId', e.target.value)}
                       placeholder="XXXXXX/XXXX"
-                      className="w-[calc(25%-0.375rem)] px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent h-[42px]"
+                      className="w-full sm:w-[calc(25%-0.375rem)] px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent h-[42px]"
                     />
                     <button
                       type="button"
@@ -331,7 +330,7 @@ export default function Step1BasicInfo({ formData, onDataChange, onNext }: Step1
             </div>
 
             {/* Jméno a tituly - 4 columns */}
-            <div className="grid grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               <div>
                 <label className="block text-sm font-medium text-brand-900 mb-2">Titul před jménem</label>
                 <select
@@ -444,7 +443,7 @@ export default function Step1BasicInfo({ formData, onDataChange, onNext }: Step1
 
         {/* Kontakt - 2 columns */}
         <div className="border border-border rounded-xl p-4 mb-6">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-brand-900 mb-2">
               Telefonní číslo
@@ -522,7 +521,7 @@ export default function Step1BasicInfo({ formData, onDataChange, onNext }: Step1
               <label className="block text-sm font-medium text-brand-900 mb-3">
                 Jakou nemovitost chcete pojistit?
               </label>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                 {[
                   { value: 'byt', label: 'Byt', Icon: Building2 },
                   { value: 'dum', label: 'Dům', Icon: Home },
@@ -530,7 +529,7 @@ export default function Step1BasicInfo({ formData, onDataChange, onNext }: Step1
                 ].map((type) => (
                   <label
                     key={type.value}
-                    className={`relative p-8 border-2 rounded-lg cursor-pointer transition-all flex flex-col items-center justify-center min-h-[140px] ${
+                    className={`relative p-5 sm:p-8 border-2 rounded-lg cursor-pointer transition-all flex flex-col items-center justify-center min-h-[110px] sm:min-h-[140px] ${
                       formData.propertyType === type.value
                         ? 'border-brand-600 bg-brand-50'
                         : 'border-border hover:border-border-strong'
@@ -564,7 +563,7 @@ export default function Step1BasicInfo({ formData, onDataChange, onNext }: Step1
 
             {/* Druh vlastnictví - zobrazit pouze pro Byt */}
             {formData.propertyType === 'byt' && (
-              <div className="w-[calc((100%-1rem)/2)]">
+              <div className="w-full sm:w-[calc((100%-1rem)/2)]">
                 <label className="block text-sm font-medium text-brand-900 mb-2">Druh vlastnictví</label>
                 <div className="relative flex items-center bg-surface-muted rounded-full p-1 w-full">
                   <button
@@ -625,7 +624,7 @@ export default function Step1BasicInfo({ formData, onDataChange, onNext }: Step1
             {formData.notApproved && (
               <div className="mt-6 bg-brand-50 rounded-xl p-6 space-y-6">
                 {/* PSČ a Obec */}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-brand-900 mb-2">
                       PSČ
@@ -651,7 +650,7 @@ export default function Step1BasicInfo({ formData, onDataChange, onNext }: Step1
                 </div>
 
                 {/* Katastrální území a Číslo parcely */}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-brand-900 mb-2">
                       Katastrální území
@@ -679,7 +678,7 @@ export default function Step1BasicInfo({ formData, onDataChange, onNext }: Step1
                 {/* Typ parcely */}
                 <div>
                   <label className="block text-sm font-medium text-brand-900 mb-2">Typ parcely</label>
-                  <div className="relative flex items-center bg-surface-muted rounded-full p-1 w-full max-w-2xl">
+                  <div className="relative flex flex-col sm:flex-row sm:items-center bg-surface-muted rounded-2xl sm:rounded-full p-1 w-full max-w-2xl">
                     <button
                       type="button"
                       onClick={() => handleChange('parcelType', 'stavebni')}
@@ -721,7 +720,7 @@ export default function Step1BasicInfo({ formData, onDataChange, onNext }: Step1
 
           {/* Vztah k nemovitosti */}
           <div className="mb-6 border border-border rounded-xl p-4">
-            <div className="flex items-end gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-end gap-4">
               <div className="flex-1">
                 <label className="block text-sm font-medium text-brand-900 mb-2">Vztah k nemovitosti</label>
                 <div className="relative flex items-center bg-surface-muted rounded-full p-1 w-full">

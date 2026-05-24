@@ -12,9 +12,9 @@ interface StepperProps {
  */
 export const Stepper: React.FC<StepperProps> = ({ currentStep, steps, onStepClick }) => {
   return (
-    <div className="relative w-full px-4">
+    <div className="relative w-full px-1 sm:px-4">
       {/* Průběžná spojovací čára vedená středem koleček */}
-      <div className="pointer-events-none absolute left-8 right-8 top-4 h-0.5 bg-border-strong" />
+      <div className="pointer-events-none absolute left-6 right-6 top-4 h-0.5 bg-border-strong sm:left-8 sm:right-8" />
       <ol className="relative flex w-full items-start justify-between">
         {steps.map((label, index) => {
           const stepNumber = index + 1;
@@ -36,7 +36,7 @@ export const Stepper: React.FC<StepperProps> = ({ currentStep, steps, onStepClic
                 {stepNumber}
               </div>
               <span
-                className={`mt-1.5 whitespace-nowrap text-xs font-medium ${
+                className={`mt-1.5 hidden whitespace-nowrap text-xs font-medium sm:block ${
                   isActive ? 'text-brand-600' : 'text-muted'
                 }`}
               >
@@ -46,6 +46,11 @@ export const Stepper: React.FC<StepperProps> = ({ currentStep, steps, onStepClic
           );
         })}
       </ol>
+      {/* Mobilní popisek aktuálního kroku */}
+      <div className="mt-3 text-center sm:hidden">
+        <span className="text-xs font-medium text-muted">Krok {currentStep} z {steps.length} · </span>
+        <span className="text-xs font-semibold text-brand-600">{steps[currentStep - 1]}</span>
+      </div>
     </div>
   );
 };

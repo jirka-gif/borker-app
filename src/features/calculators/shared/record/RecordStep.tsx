@@ -551,7 +551,7 @@ export function RecordStep({
             ) : (
               <div className="rounded-xl border border-border p-4">
                 <h3 className="mb-3 text-sm font-semibold text-foreground">Podpis klienta</h3>
-                <div className="mb-3 grid grid-cols-2 gap-2">
+                <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
                   {(
                     [
                       { v: 'email' as const, label: 'Ověřovací odkaz e-mailem', Icon: Mail },

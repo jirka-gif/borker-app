@@ -90,7 +90,7 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                   /* Formulář pro Dům */
                   <>
                     {/* Celková zastavěná plocha a Celková užitná plocha */}
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-brand-900 mb-2">
                           Celková zastavěná plocha v m²
@@ -116,7 +116,7 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                     </div>
 
                     {/* Konstrukce domu a Kvalita použitých materiálů - vedle sebe */}
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-brand-900 mb-2">
                           Konstrukce domu
@@ -151,7 +151,7 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                     </div>
 
                     {/* Typ střechy a Počet podlaží - vedle sebe */}
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-brand-900 mb-2">
                           Typ střechy
@@ -230,7 +230,7 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                       <label className="block text-sm font-medium text-brand-900 mb-2">
                         Podsklepení (kolik % zastavěné plochy stavby zabírá sklep)
                       </label>
-                      <div className="relative flex items-center bg-surface-muted rounded-full p-1 w-full gap-1">
+                      <div className="relative flex flex-col sm:flex-row sm:items-center bg-surface-muted rounded-2xl sm:rounded-full p-1 w-full gap-1">
                         <button
                           type="button"
                           onClick={() => handleChange('cellarPercentage', 'none')}
@@ -354,7 +354,7 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                   <>
                     {/* Dispozice, plocha, číslo bytu, umístění */}
                 <div className="border border-border rounded-lg p-6">
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-brand-900 mb-2">
                         Dispozice bytu
@@ -447,7 +447,7 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                 {/* Konstrukce nemovitosti */}
                 <div className="border border-border rounded-lg p-6">
                   <h3 className="text-sm font-medium text-brand-900 mb-2">Konstrukce nemovitosti</h3>
-                  <div className="relative flex items-center bg-surface-muted rounded-full p-1 w-[calc((100%-1rem)/2)]">
+                  <div className="relative flex items-center bg-surface-muted rounded-full p-1 w-full sm:w-[calc((100%-1rem)/2)]">
                     <button
                       type="button"
                       onClick={() => handleChange('apartmentConstruction', 'panel')}
@@ -489,7 +489,7 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                   {/* Kvalita bytu */}
                   <div>
                     <label className="block text-sm font-medium text-brand-900 mb-2">Kvalita bytu</label>
-                    <div className="relative flex items-center bg-surface-muted rounded-full p-1 w-[calc((100%-1rem)/2)]">
+                    <div className="relative flex items-center bg-surface-muted rounded-full p-1 w-full sm:w-[calc((100%-1rem)/2)]">
                       <button
                         type="button"
                         onClick={() => handleChange('apartmentQuality', 'standard')}
@@ -518,7 +518,7 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                   {/* Stav bytu */}
                   <div>
                     <label className="block text-sm font-medium text-brand-900 mb-2">Stav bytu</label>
-                    <div className="relative flex items-center bg-surface-muted rounded-full p-1 w-full max-w-2xl">
+                    <div className="relative flex flex-col sm:flex-row sm:items-center bg-surface-muted rounded-2xl sm:rounded-full p-1 w-full max-w-2xl">
                       <button
                         type="button"
                         onClick={() => handleChange('apartmentCondition', 'dobry')}

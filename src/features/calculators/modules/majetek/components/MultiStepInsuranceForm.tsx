@@ -156,7 +156,7 @@ export default function MultiStepInsuranceForm() {
   return (
     <div>
       {/* Lišta kroků (rámec dodává hostitelská stránka hubu) */}
-      <div className="mb-6 rounded-2xl border border-border bg-surface px-6 py-4 shadow-sm">
+      <div className="mb-6 rounded-2xl border border-border bg-surface px-3 py-4 shadow-sm sm:px-6">
         <ProgressIndicator currentStep={currentStep} onStepClick={setCurrentStep} />
       </div>
 
