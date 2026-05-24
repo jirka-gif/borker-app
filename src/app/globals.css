@@ -1,0 +1,232 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/**
+ * Star Insurance Group – design tokens.
+ * Hodnoty v "R G B" formátu kvůli podpoře <alpha-value> v Tailwindu.
+ * Dark mode se přepíná atributem `data-theme="dark"` na <html>.
+ */
+@layer base {
+  :root {
+    /* Značka – odvozeno z loga (#A82844), jemnější odstín mezi vínovou a malinovou. */
+    --brand-50: 253 242 244;
+    --brand-100: 251 227 231;
+    --brand-200: 245 194 203;
+    --brand-300: 236 151 166;
+    --brand-400: 223 99 119;
+    --brand-500: 198 61 86;
+    --brand-600: 168 40 68;
+    --brand-700: 139 30 56;
+    --brand-800: 109 26 48;
+    --brand-900: 74 18 32;
+
+    /* Povrchy – teplý krémový tón místo studené modrošedé. */
+    --background: 250 248 245;
+    --surface: 255 255 255;
+    --surface-muted: 244 241 236;
+    --surface-warm: 250 243 238;
+    --border: 233 229 220;
+    --border-strong: 214 209 196;
+
+    --foreground: 26 22 20;
+    --muted: 97 93 86;
+    --subtle: 146 141 131;
+
+    --ring: 168 40 68;
+
+    /* Stavy – decentní, ale čitelné. */
+    --success: 59 109 17;
+    --success-bg: 234 243 222;
+    --warning: 133 79 11;
+    --warning-bg: 250 238 218;
+    --danger: 163 45 45;
+    --danger-bg: 252 235 235;
+    --info: 12 68 124;
+    --info-bg: 230 241 251;
+
+    /* Akcentní pozadí pro ikony kategorií. */
+    --accent-peach: 245 220 201;
+    --accent-sky: 216 230 240;
+    --accent-sage: 221 229 208;
+    --accent-lilac: 227 220 232;
+    --accent-mint: 225 245 238;
+
+    /* Tlačítkový gradient – mírná, ne křiklavá, hloubka. */
+    --btn-primary-from: 184 52 79;
+    --btn-primary-to: 168 40 68;
+  }
+
+  html[data-theme="dark"] {
+    --brand-50: 42 18 25;
+    --brand-100: 61 24 34;
+    --brand-200: 90 32 48;
+    --brand-300: 139 30 56;
+    --brand-400: 198 61 86;
+    --brand-500: 223 99 119;
+    --brand-600: 236 151 166;
+    --brand-700: 245 194 203;
+    --brand-800: 251 227 231;
+    --brand-900: 253 242 244;
+
+    --background: 13 11 10;
+    --surface: 26 23 21;
+    --surface-muted: 37 34 32;
+    --surface-warm: 34 28 27;
+    --border: 46 42 38;
+    --border-strong: 63 58 52;
+
+    --foreground: 245 241 234;
+    --muted: 168 163 154;
+    --subtle: 110 104 98;
+
+    --ring: 223 99 119;
+
+    --success: 151 196 89;
+    --success-bg: 31 38 26;
+    --warning: 239 159 39;
+    --warning-bg: 46 34 24;
+    --danger: 224 75 74;
+    --danger-bg: 50 22 22;
+    --info: 91 138 207;
+    --info-bg: 26 35 48;
+
+    --accent-peach: 46 34 24;
+    --accent-sky: 26 35 48;
+    --accent-sage: 31 38 26;
+    --accent-lilac: 36 31 42;
+    --accent-mint: 22 38 32;
+
+    --btn-primary-from: 198 61 86;
+    --btn-primary-to: 168 40 68;
+  }
+
+  * {
+    border-color: rgb(var(--border));
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    color-scheme: light;
+  }
+
+  html[data-theme="dark"] {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: rgb(var(--background));
+    background-image:
+      radial-gradient(
+        ellipse 900px 500px at 85% -10%,
+        rgb(var(--brand-600) / 0.07),
+        transparent 60%
+      ),
+      radial-gradient(
+        ellipse 700px 400px at -5% 100%,
+        rgb(var(--brand-600) / 0.04),
+        transparent 60%
+      );
+    background-attachment: fixed;
+    color: rgb(var(--foreground));
+  }
+
+  html[data-theme="dark"] body {
+    background-image:
+      radial-gradient(
+        ellipse 900px 500px at 85% -10%,
+        rgb(var(--brand-500) / 0.12),
+        transparent 60%
+      ),
+      radial-gradient(
+        ellipse 700px 400px at -5% 100%,
+        rgb(var(--brand-600) / 0.08),
+        transparent 60%
+      );
+  }
+
+  :focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgb(var(--ring) / 0.35);
+    border-radius: 8px;
+  }
+}
+
+@layer utilities {
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    background-color: rgb(var(--surface-muted));
+  }
+  .skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgb(var(--surface) / 0.7),
+      transparent
+    );
+    animation: shimmer 1.5s infinite;
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--border-strong)) transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: rgb(var(--border-strong));
+    border-radius: 9999px;
+  }
+
+  .btn-primary-gradient {
+    background-image: linear-gradient(
+      180deg,
+      rgb(var(--btn-primary-from)) 0%,
+      rgb(var(--btn-primary-to)) 100%
+    );
+  }
+
+  @keyframes ping-soft {
+    0% {
+      box-shadow: 0 0 0 0 rgb(var(--brand-600) / 0.5);
+    }
+    70% {
+      box-shadow: 0 0 0 8px rgb(var(--brand-600) / 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgb(var(--brand-600) / 0);
+    }
+  }
+  .pulse-dot {
+    animation: ping-soft 1.6s ease-in-out infinite;
+  }
+
+  @keyframes step-shimmer {
+    0%,
+    100% {
+      transform: translateX(-100%);
+    }
+    50% {
+      transform: translateX(0);
+    }
+  }
+  .step-shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      rgb(var(--brand-600)) 50%,
+      transparent 50%
+    );
+    animation: step-shimmer 1.8s ease-in-out infinite;
+  }
+}

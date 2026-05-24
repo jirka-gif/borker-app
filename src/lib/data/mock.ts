@@ -1,0 +1,182 @@
+import type { Contract, Draft, RecentCalculator } from "@/types";
+
+/**
+ * Mock datová vrstva. Až bude připraven backend / CRM, stačí nahradit
+ * obsah lib/data/* skutečným API klientem – komponenty se nemění.
+ *
+ * Časy jsou generované relativně k "teď", aby dashboard vždy vypadal živě.
+ */
+const now = Date.now();
+const minutes = (m: number) => new Date(now - m * 60_000).toISOString();
+const hours = (h: number) => new Date(now - h * 3_600_000).toISOString();
+const days = (d: number) => new Date(now - d * 86_400_000).toISOString();
+
+export const MOCK_DRAFTS: Draft[] = [
+  {
+    id: "drf_1001",
+    type: "auta",
+    calculatorName: "Pojištění vozidel",
+    clientName: "Jan Novák",
+    status: "nabidka-vytvorena",
+    progress: 80,
+    currentStep: 4,
+    totalSteps: 5,
+    updatedAt: minutes(18),
+    premium: 8940,
+  },
+  {
+    id: "drf_1002",
+    type: "majetek",
+    calculatorName: "Pojištění majetku",
+    clientName: "Petra Svobodová",
+    status: "ceka-na-doplneni",
+    progress: 45,
+    currentStep: 2,
+    totalSteps: 5,
+    updatedAt: hours(3),
+  },
+  {
+    id: "drf_1003",
+    type: "cestovni",
+    calculatorName: "Cestovní pojištění",
+    clientName: "Rodina Dvořákovi",
+    status: "ceka-na-podpis",
+    progress: 95,
+    currentStep: 5,
+    totalSteps: 5,
+    updatedAt: hours(6),
+    premium: 1280,
+  },
+  {
+    id: "drf_1004",
+    type: "mazlicek",
+    calculatorName: "Mazlíček",
+    clientName: "Lucie Marková",
+    status: "rozepsana",
+    progress: 20,
+    currentStep: 1,
+    totalSteps: 4,
+    updatedAt: days(1),
+  },
+  {
+    id: "drf_1005",
+    type: "odpovednost",
+    calculatorName: "Pojištění odpovědnosti",
+    clientName: "Tomáš Horák",
+    status: "dokonceno",
+    progress: 100,
+    currentStep: 4,
+    totalSteps: 4,
+    updatedAt: days(2),
+    premium: 1560,
+  },
+  {
+    id: "drf_1006",
+    type: "zdravotni-cizinci",
+    calculatorName: "Zdravotní pojištění cizinců",
+    clientName: "Nguyen Van An",
+    status: "ceka-na-doplneni",
+    progress: 60,
+    currentStep: 3,
+    totalSteps: 5,
+    updatedAt: days(4),
+  },
+  {
+    id: "drf_1007",
+    type: "auta",
+    calculatorName: "Pojištění vozidel",
+    clientName: "Eva Pokorná",
+    status: "storno",
+    progress: 35,
+    currentStep: 2,
+    totalSteps: 5,
+    updatedAt: days(8),
+  },
+];
+
+export const MOCK_RECENT: RecentCalculator[] = [
+  { slug: "auta", usedAt: minutes(18) },
+  { slug: "cestovni", usedAt: hours(6) },
+  { slug: "majetek", usedAt: hours(3) },
+  { slug: "mazlicek", usedAt: days(1) },
+];
+
+export const MOCK_CONTRACTS: Contract[] = [
+  {
+    id: "ctr_5001",
+    number: "SML-2026-004821",
+    clientName: "Tomáš Horák",
+    type: "odpovednost",
+    insurer: "Kooperativa",
+    premium: 1560,
+    status: "aktivni",
+    startDate: days(-7),
+    signedAt: days(2),
+  },
+  {
+    id: "ctr_5002",
+    number: "SML-2026-004790",
+    clientName: "Jan Novák",
+    type: "auta",
+    insurer: "Allianz",
+    premium: 8940,
+    status: "aktivni",
+    startDate: days(-1),
+    signedAt: days(5),
+  },
+  {
+    id: "ctr_5003",
+    number: "SML-2026-004752",
+    clientName: "Rodina Dvořákovi",
+    type: "cestovni",
+    insurer: "UNIQA",
+    premium: 1280,
+    status: "ceka-na-platbu",
+    startDate: days(-3),
+    signedAt: days(6),
+  },
+  {
+    id: "ctr_5004",
+    number: "SML-2026-004615",
+    clientName: "Petra Svobodová",
+    type: "majetek",
+    insurer: "Generali",
+    premium: 7200,
+    status: "aktivni",
+    startDate: days(-18),
+    signedAt: days(12),
+  },
+  {
+    id: "ctr_5005",
+    number: "SML-2026-004488",
+    clientName: "Lucie Marková",
+    type: "mazlicek",
+    insurer: "Direct",
+    premium: 4100,
+    status: "aktivni",
+    startDate: days(-25),
+    signedAt: days(20),
+  },
+  {
+    id: "ctr_5006",
+    number: "SML-2026-004301",
+    clientName: "Nguyen Van An",
+    type: "zdravotni-cizinci",
+    insurer: "ČSOB Pojišťovna",
+    premium: 14300,
+    status: "ceka-na-platbu",
+    startDate: days(-2),
+    signedAt: days(9),
+  },
+  {
+    id: "ctr_5007",
+    number: "SML-2025-009912",
+    clientName: "Martin Beneš",
+    type: "auta",
+    insurer: "Allianz",
+    premium: 11200,
+    status: "ukoncena",
+    startDate: days(-400),
+    signedAt: days(395),
+  },
+];
