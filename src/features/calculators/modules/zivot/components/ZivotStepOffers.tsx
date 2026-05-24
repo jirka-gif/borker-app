@@ -134,15 +134,15 @@ export function ZivotStepOffers({ value, onChange, onNext, onBack }: Props) {
       {/* Porovnání */}
       <div>
         <h3 className="mb-3 text-base font-semibold text-foreground">Porovnání všech nabídek (ročně)</h3>
-        <div className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
-          <div className="flex h-48 items-end gap-3">
+        <div className="rounded-2xl border border-border bg-surface p-4 shadow-sm sm:p-6">
+          <div className="flex h-48 items-end gap-3 overflow-x-auto pb-1">
             {ZIVOT_OFFERS.map((o) => {
               const a = annual(o.id);
               const h = (a / maxAnnual) * 100;
               const selected = value.selectedOfferId === o.id;
               return (
-                <div key={o.id} className="flex min-w-0 flex-1 cursor-pointer flex-col items-center" onClick={() => set('selectedOfferId', o.id)}>
-                  <div className={`mb-1 text-xs font-semibold ${selected ? 'text-brand-700' : 'text-foreground'}`}>{formatCzk(a)}</div>
+                <div key={o.id} className="flex w-16 shrink-0 cursor-pointer flex-col items-center sm:w-auto sm:min-w-0 sm:flex-1" onClick={() => set('selectedOfferId', o.id)}>
+                  <div className={`mb-1 whitespace-nowrap text-xs font-semibold ${selected ? 'text-brand-700' : 'text-foreground'}`}>{formatCzk(a)}</div>
                   <div
                     className={`w-full rounded-t transition-all ${selected ? 'bg-gradient-to-t from-brand-600 to-brand-400' : 'bg-border-strong'}`}
                     style={{ height: `${Math.max(h, 4)}%` }}

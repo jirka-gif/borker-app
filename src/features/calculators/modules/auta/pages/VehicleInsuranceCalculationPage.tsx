@@ -453,19 +453,20 @@ export const VehicleInsuranceCalculationPage: React.FC<VehicleInsuranceCalculati
           <h2 className="text-lg font-semibold text-foreground mb-4">
             Porovnání všech nabídek
           </h2>
-          <div className="bg-surface rounded-lg border border-border shadow-sm p-6">
-            <div className="flex items-end gap-2 h-64 relative">
+          <div className="bg-surface rounded-lg border border-border shadow-sm p-4 sm:p-6">
+            {/* Na mobilu pevná šířka sloupců + vodorovné posouvání, na desktopu roztažení přes celou šířku */}
+            <div className="flex items-end gap-2 h-64 relative overflow-x-auto pb-1">
               {allOffers.map((offer, idx) => {
                 const height = (offer.price / maxPrice) * 100;
                 const isHovered = hoveredOfferIndex === idx;
                 return (
                   <div
                     key={idx}
-                    className="flex-1 flex flex-col items-center min-w-0 cursor-pointer group"
+                    className="flex w-16 shrink-0 flex-col items-center cursor-pointer group sm:w-auto sm:flex-1 sm:min-w-0"
                     onMouseEnter={(e) => handleMouseEnter(idx, e)}
                     onMouseLeave={handleMouseLeave}
                   >
-                    <div className={`text-xs font-semibold mb-1 transition-colors ${isHovered ? 'text-[#A82844]' : 'text-foreground'}`}>
+                    <div className={`whitespace-nowrap text-xs font-semibold mb-1 transition-colors ${isHovered ? 'text-[#A82844]' : 'text-foreground'}`}>
                       {offer.price.toLocaleString('cs-CZ')} Kč
                     </div>
                     <div

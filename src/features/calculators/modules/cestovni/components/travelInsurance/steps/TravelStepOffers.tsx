@@ -221,8 +221,8 @@ export function TravelStepOffers({ offers, onNext, onBack }: TravelStepOffersPro
       {sortedOffers.length > 1 && (
         <div>
           <h3 className="text-lg font-semibold text-foreground mb-4">Porovnání všech nabídek</h3>
-          <div className="rounded-lg border border-border bg-surface p-6 shadow-sm">
-            <div className="flex h-64 items-end gap-2">
+          <div className="rounded-lg border border-border bg-surface p-4 shadow-sm sm:p-6">
+            <div className="flex h-64 items-end gap-2 overflow-x-auto pb-1">
               {sortedOffers.map((offer, idx) => {
                 const height = (offer.totalPrice / maxPrice) * 100;
                 const isHovered = hoveredIndex === idx;
@@ -230,13 +230,13 @@ export function TravelStepOffers({ offers, onNext, onBack }: TravelStepOffersPro
                 return (
                   <div
                     key={offer.id}
-                    className="flex min-w-0 flex-1 cursor-pointer flex-col items-center"
+                    className="flex w-16 shrink-0 cursor-pointer flex-col items-center sm:w-auto sm:min-w-0 sm:flex-1"
                     onMouseEnter={() => setHoveredIndex(idx)}
                     onMouseLeave={() => setHoveredIndex(null)}
                     onClick={() => handleSelect(offer)}
                   >
                     <div
-                      className={`mb-1 text-xs font-semibold transition-colors ${
+                      className={`mb-1 whitespace-nowrap text-xs font-semibold transition-colors ${
                         isHovered || isSelected ? 'text-[#A82844]' : 'text-foreground'
                       }`}
                     >

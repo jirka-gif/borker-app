@@ -283,15 +283,15 @@ export default function Step3Calculation({ formData, onDataChange, onNext, onBac
       </div>
 
       {/* Comparison Chart - Column Chart */}
-      <div className="bg-surface rounded-xl shadow-sm p-8">
+      <div className="bg-surface rounded-xl shadow-sm p-5 sm:p-8">
         <h3 className="text-xl font-semibold text-brand-900 mb-6">Porovnání všech nabídek</h3>
-        <div className="flex items-end justify-center gap-6 h-64 pb-8">
+        <div className="flex items-end justify-center gap-3 h-64 pb-8 overflow-x-auto sm:gap-6">
           {allPrices.map((item, index) => {
             const maxPrice = Math.max(...allPrices.map((p) => p.price))
             const heightPercent = (item.price / maxPrice) * 100
             return (
-              <div key={index} className="flex flex-col items-center gap-2 flex-1">
-                <div className="text-sm font-semibold text-foreground mb-2">
+              <div key={index} className="flex w-20 shrink-0 flex-col items-center gap-2 sm:w-auto sm:flex-1">
+                <div className="whitespace-nowrap text-sm font-semibold text-foreground mb-2">
                   {formatCurrency(item.price)}
                 </div>
                 <div 
