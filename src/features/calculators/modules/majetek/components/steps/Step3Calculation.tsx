@@ -2,6 +2,10 @@
 
 import { useState } from 'react'
 import { FormData, InsuranceOffer, AdditionalOption } from '../../types/formData'
+import { openOffersPdf, type PropertyOffersPdfData } from '../propertyOffersPdf'
+
+/** Nabízené slevy (% z pojistného). */
+const DISCOUNT_OPTIONS = [0, 5, 10, 15, 20]
 
 interface Step3CalculationProps {
   formData: FormData
@@ -93,6 +97,11 @@ export default function Step3Calculation({ formData, onDataChange, onNext, onBac
   ])
 
   const [selectedOffers, setSelectedOffers] = useState<InsuranceOffer[]>(offers)
+  // Sleva v % per nabídka + které nabídce je zrovna otevřený výběr slevy.
+  const [discounts, setDiscounts] = useState<Record<number, number>>({})
+  const [openDiscount, setOpenDiscount] = useState<number | null>(null)
+
+  const discountFor = (index: number) => discounts[index] || 0
 
   const handleToggleOption = (offerIndex: number, optionId: string) => {
     const updated = [...selectedOffers]
@@ -111,6 +120,10 @@ export default function Step3Calculation({ formData, onDataChange, onNext, onBac
     return basePrice + additionalPrice
   }
 
+  // Cena po uplatnění slevy (zaokrouhleno na celé Kč).
+  const finalPrice = (offer: InsuranceOffer, index: number) =>
+    Math.round(calculateTotalPrice(offer) * (1 - discountFor(index) / 100))
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('cs-CZ', {
       style: 'currency',
@@ -119,15 +132,54 @@ export default function Step3Calculation({ formData, onDataChange, onNext, onBac
     }).format(amount)
   }
 
-  const allPrices = [
-    { provider: 'CSOB', price: calculateTotalPrice(selectedOffers[0]) },
-    { provider: 'CPP', price: calculateTotalPrice(selectedOffers[1]) },
-    { provider: 'Kooperativa', price: calculateTotalPrice(selectedOffers[2]) },
+  // Další nabídky (pouze pro porovnání / souhrn – bez detailu).
+  const otherOffers = [
     { provider: 'Pillow', price: 1420 },
-    { provider: 'Other', price: 1620 },
+    { provider: 'Allianz', price: 1620 },
+  ]
+
+  const allPrices = [
+    ...selectedOffers.map((o, i) => ({ provider: o.provider, price: finalPrice(o, i) })),
+    ...otherOffers,
   ]
 
   const minPrice = Math.min(...allPrices.map((p) => p.price))
+
+  const propertyLabel =
+    formData.propertyType === 'byt' ? 'Byt' : formData.propertyType === 'dum' ? 'Dům' : 'Chata, chalupa'
+
+  // Sestaví data a otevře PDF draft nabídek.
+  const handleDownloadPdf = () => {
+    const sorted = selectedOffers
+      .map((o, i) => ({ o, i }))
+      .sort((a, b) => finalPrice(a.o, a.i) - finalPrice(b.o, b.i))
+
+    const data: PropertyOffersPdfData = {
+      clientName:
+        formData.firstName && formData.lastName
+          ? `${formData.firstName} ${formData.lastName}`
+          : formData.companyName || '',
+      propertyLabel,
+      propertyAddress: formData.propertyAddress || '',
+      offerNumber: '1982899',
+      startDate: formData.insuranceStartDate || '',
+      paymentFrequency: formData.paymentFrequency || 'ročně',
+      topOffers: sorted.map(({ o, i }) => ({
+        provider: o.provider,
+        productName: o.productName,
+        basePrice: o.price,
+        included: o.includedCoverages,
+        addons: o.additionalOptions
+          .filter((opt) => opt.enabled)
+          .map((opt) => ({ name: opt.name, price: opt.price })),
+        total: calculateTotalPrice(o),
+        discountPercent: discountFor(i),
+        final: finalPrice(o, i),
+      })),
+      otherOffers,
+    }
+    openOffersPdf(data)
+  }
 
   return (
     <div className="space-y-8">
@@ -196,6 +248,8 @@ export default function Step3Calculation({ formData, onDataChange, onNext, onBac
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {selectedOffers.map((offer, index) => {
           const totalPrice = calculateTotalPrice(offer)
+          const discount = discountFor(index)
+          const priceAfter = finalPrice(offer, index)
           return (
             <div key={index} className="bg-surface rounded-xl shadow-sm p-8 space-y-5 relative">
               <button 
@@ -210,8 +264,13 @@ export default function Step3Calculation({ formData, onDataChange, onNext, onBac
               <div className="space-y-4">
                 <div className="bg-brand-50 rounded-lg p-4 text-center">
                   <div className="text-xs text-muted mb-2 font-medium">{offer.provider}</div>
-                  <div className="text-3xl font-bold text-brand-600 mb-1">{formatCurrency(totalPrice)}</div>
-                  <div className="text-xs text-muted mb-3">Ročně</div>
+                  {discount > 0 && (
+                    <div className="text-sm text-muted line-through">{formatCurrency(totalPrice)}</div>
+                  )}
+                  <div className="text-3xl font-bold text-brand-600 mb-1">{formatCurrency(priceAfter)}</div>
+                  <div className="text-xs text-muted mb-3">
+                    Ročně{discount > 0 && <span className="ml-1 font-semibold text-success">· sleva {discount} %</span>}
+                  </div>
                   <div className="text-base font-semibold text-brand-600">{offer.productName}</div>
                 </div>
 
@@ -263,9 +322,37 @@ export default function Step3Calculation({ formData, onDataChange, onNext, onBac
                 </div>
 
                 <div className="pt-4 space-y-2 border-t border-border">
-                  <button className="w-full px-4 py-2 bg-brand-100 hover:bg-brand-200 text-brand-700 rounded-lg text-sm font-medium transition-colors">
-                    Uplatnit slevu
+                  <button
+                    type="button"
+                    onClick={() => setOpenDiscount(openDiscount === index ? null : index)}
+                    className="w-full px-4 py-2 bg-brand-100 hover:bg-brand-200 text-brand-700 rounded-lg text-sm font-medium transition-colors"
+                  >
+                    {discount > 0 ? `Sleva ${discount} % uplatněna` : 'Uplatnit slevu'}
                   </button>
+                  {openDiscount === index && (
+                    <div className="rounded-lg border border-border bg-surface-muted p-3">
+                      <div className="mb-2 text-xs font-medium text-muted">Zvolte výši slevy</div>
+                      <div className="flex flex-wrap gap-2">
+                        {DISCOUNT_OPTIONS.map((d) => (
+                          <button
+                            key={d}
+                            type="button"
+                            onClick={() => {
+                              setDiscounts((prev) => ({ ...prev, [index]: d }))
+                              setOpenDiscount(null)
+                            }}
+                            className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
+                              discount === d
+                                ? 'border-brand-600 bg-brand-50 text-brand-700'
+                                : 'border-border bg-surface text-foreground hover:border-border-strong'
+                            }`}
+                          >
+                            {d === 0 ? 'Bez slevy' : `${d} %`}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   <button
                     onClick={() => {
                       onDataChange({ selectedOffer: offer })
@@ -332,7 +419,11 @@ export default function Step3Calculation({ formData, onDataChange, onNext, onBac
               </svg>
               Odeslat emailem
             </button>
-            <button className="px-4 py-2 border border-brand-600 rounded-lg hover:bg-brand-50 transition-colors flex items-center gap-2 text-sm text-brand-600 h-[42px]">
+            <button
+              type="button"
+              onClick={handleDownloadPdf}
+              className="px-4 py-2 border border-brand-600 rounded-lg hover:bg-brand-50 transition-colors flex items-center gap-2 text-sm text-brand-600 h-[42px]"
+            >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
