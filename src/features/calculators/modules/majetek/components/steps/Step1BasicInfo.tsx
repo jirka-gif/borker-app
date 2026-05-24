@@ -59,7 +59,7 @@ export default function Step1BasicInfo({ formData, onDataChange, onNext }: Step1
               <button
                 type="button"
                 onClick={() => handleChange('contractReplacement', true)}
-                className={`px-6 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
+                className={`px-3 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
                   formData.contractReplacement
                     ? 'bg-surface text-danger border border-danger shadow-sm'
                     : 'text-muted'
@@ -70,7 +70,7 @@ export default function Step1BasicInfo({ formData, onDataChange, onNext }: Step1
               <button
                 type="button"
                 onClick={() => handleChange('contractReplacement', false)}
-                className={`px-6 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
+                className={`px-3 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
                   !formData.contractReplacement
                     ? 'bg-surface text-danger border border-danger shadow-sm'
                     : 'text-muted'
@@ -569,7 +569,7 @@ export default function Step1BasicInfo({ formData, onDataChange, onNext }: Step1
                   <button
                     type="button"
                     onClick={() => handleChange('ownershipType', 'osobni')}
-                    className={`flex-1 px-6 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
+                    className={`flex-1 px-3 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
                       formData.ownershipType === 'osobni'
                         ? 'bg-surface text-brand-600 border border-brand-600 shadow-sm'
                         : 'text-muted'
@@ -580,7 +580,7 @@ export default function Step1BasicInfo({ formData, onDataChange, onNext }: Step1
                   <button
                     type="button"
                     onClick={() => handleChange('ownershipType', 'druzstevni')}
-                    className={`flex-1 px-6 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
+                    className={`flex-1 px-3 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
                       formData.ownershipType === 'druzstevni'
                         ? 'bg-surface text-brand-600 border border-brand-600 shadow-sm'
                         : 'text-muted'
@@ -727,7 +727,7 @@ export default function Step1BasicInfo({ formData, onDataChange, onNext }: Step1
                   <button
                     type="button"
                     onClick={() => handleChange('propertyRelation', 'vlastnik')}
-                    className={`flex-1 px-6 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
+                    className={`flex-1 px-3 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
                       formData.propertyRelation === 'vlastnik'
                         ? 'bg-surface text-brand-600 border border-brand-600 shadow-sm'
                         : 'text-muted'
@@ -738,7 +738,7 @@ export default function Step1BasicInfo({ formData, onDataChange, onNext }: Step1
                   <button
                     type="button"
                     onClick={() => handleChange('propertyRelation', 'najemce')}
-                    className={`flex-1 px-6 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
+                    className={`flex-1 px-3 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
                       formData.propertyRelation === 'najemce'
                         ? 'bg-surface text-brand-600 border border-brand-600 shadow-sm'
                         : 'text-muted'
@@ -757,7 +757,7 @@ export default function Step1BasicInfo({ formData, onDataChange, onNext }: Step1
                     <button
                       type="button"
                       onClick={() => handleChange('propertyRented', false)}
-                      className={`flex-1 px-6 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
+                      className={`flex-1 px-3 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
                         !formData.propertyRented
                           ? 'bg-surface text-brand-600 border border-brand-600 shadow-sm'
                           : 'text-muted'
@@ -768,7 +768,7 @@ export default function Step1BasicInfo({ formData, onDataChange, onNext }: Step1
                     <button
                       type="button"
                       onClick={() => handleChange('propertyRented', true)}
-                      className={`flex-1 px-6 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
+                      className={`flex-1 px-3 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
                         formData.propertyRented
                           ? 'bg-surface text-brand-600 border border-brand-600 shadow-sm'
                           : 'text-muted'

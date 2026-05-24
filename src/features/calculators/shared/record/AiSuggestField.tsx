@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Check, RefreshCw, Sparkles, X } from 'lucide-react';
 import { suggestField, type SuggestField } from './aiSuggestions';
 import type { SuggestContext } from './types';
@@ -31,6 +31,15 @@ export function AiSuggestField({
   const [loading, setLoading] = useState(false);
   const [variant, setVariant] = useState(0);
   const [suggestion, setSuggestion] = useState<string | null>(null);
+  const taRef = useRef<HTMLTextAreaElement>(null);
+
+  // Automatické přizpůsobení výšky obsahu – aby se delší text neořízl.
+  useEffect(() => {
+    const el = taRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = `${el.scrollHeight}px`;
+  }, [value]);
 
   const generate = (nextVariant: number) => {
     setLoading(true);
@@ -58,11 +67,12 @@ export function AiSuggestField({
       </div>
 
       <textarea
+        ref={taRef}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         rows={rows}
-        className="w-full rounded-lg border border-border bg-surface px-3.5 py-2.5 text-sm text-foreground transition-colors placeholder:text-subtle hover:border-border-strong focus-visible:border-brand-500 focus-visible:shadow-focus"
+        className="block w-full resize-none overflow-hidden rounded-lg border border-border bg-surface px-3.5 py-2.5 text-sm leading-relaxed text-foreground transition-colors placeholder:text-subtle hover:border-border-strong focus-visible:border-brand-500 focus-visible:shadow-focus"
       />
 
       {(loading || suggestion) && (

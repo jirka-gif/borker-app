@@ -61,7 +61,7 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                 <button
                   type="button"
                   onClick={() => handleChange('insuranceStavba', false)}
-                  className={`px-6 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
+                  className={`px-3 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
                     !formData.insuranceStavba
                       ? 'bg-surface text-brand-600 border border-brand-600 shadow-sm'
                       : 'text-muted'
@@ -72,7 +72,7 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                 <button
                   type="button"
                   onClick={() => handleChange('insuranceStavba', true)}
-                  className={`px-6 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
+                  className={`px-3 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
                     formData.insuranceStavba
                       ? 'bg-surface text-brand-600 border border-brand-600 shadow-sm'
                       : 'text-muted'
@@ -160,7 +160,7 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                           <button
                             type="button"
                             onClick={() => handleChange('roofType', 'sikma')}
-                            className={`flex-1 px-6 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
+                            className={`flex-1 px-3 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
                               formData.roofType === 'sikma'
                                 ? 'bg-surface text-brand-600 border border-brand-600 shadow-sm'
                                 : 'text-muted'
@@ -171,7 +171,7 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                           <button
                             type="button"
                             onClick={() => handleChange('roofType', 'rovna')}
-                            className={`flex-1 px-6 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
+                            className={`flex-1 px-3 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
                               formData.roofType === 'rovna'
                                 ? 'bg-surface text-brand-600 border border-brand-600 shadow-sm'
                                 : 'text-muted'
@@ -202,7 +202,7 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                           <button
                             type="button"
                             onClick={() => handleChange('floors', 'jedno')}
-                            className={`flex-1 px-6 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
+                            className={`flex-1 px-3 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
                               formData.floors === 'jedno'
                                 ? 'bg-surface text-brand-600 border border-brand-600 shadow-sm'
                                 : 'text-muted'
@@ -213,7 +213,7 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                           <button
                             type="button"
                             onClick={() => handleChange('floors', 'vice')}
-                            className={`flex-1 px-6 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
+                            className={`flex-1 px-3 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
                               formData.floors === 'vice'
                                 ? 'bg-surface text-brand-600 border border-brand-600 shadow-sm'
                                 : 'text-muted'
@@ -302,7 +302,7 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                         <button
                           type="button"
                           onClick={() => handleValueChange(-10000)}
-                          className="w-10 h-10 rounded-lg bg-border-strong hover:bg-border-strong flex items-center justify-center text-brand-900 font-semibold transition-colors"
+                          className="shrink-0 w-10 h-10 rounded-lg border border-brand-200 bg-surface hover:bg-brand-50 flex items-center justify-center text-brand-700 text-lg font-bold transition-colors"
                         >
                           −
                         </button>
@@ -310,12 +310,12 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                           type="text"
                           value={formatCurrency(formData.propertyValue)}
                           readOnly
-                          className="flex-1 px-4 py-3 border border-border rounded-lg bg-surface text-center font-semibold text-foreground"
+                          className="flex-1 min-w-0 px-4 py-3 border border-border rounded-lg bg-surface text-center font-semibold text-foreground"
                         />
                         <button
                           type="button"
                           onClick={() => handleValueChange(10000)}
-                          className="w-10 h-10 rounded-lg bg-border-strong hover:bg-border-strong flex items-center justify-center text-brand-900 font-semibold transition-colors"
+                          className="shrink-0 w-10 h-10 rounded-lg border border-brand-200 bg-surface hover:bg-brand-50 flex items-center justify-center text-brand-700 text-lg font-bold transition-colors"
                         >
                           +
                         </button>
@@ -328,7 +328,7 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                         <button
                           type="button"
                           onClick={() => handleAncillaryBuildingsChange(-10000)}
-                          className="w-10 h-10 rounded-lg bg-border-strong hover:bg-border-strong flex items-center justify-center text-brand-900 font-semibold transition-colors"
+                          className="shrink-0 w-10 h-10 rounded-lg border border-brand-200 bg-surface hover:bg-brand-50 flex items-center justify-center text-brand-700 text-lg font-bold transition-colors"
                         >
                           −
                         </button>
@@ -336,12 +336,12 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                           type="text"
                           value={formatCurrency(formData.ancillaryBuildings || 0)}
                           readOnly
-                          className="flex-1 px-4 py-3 border border-border rounded-lg bg-surface text-center font-semibold text-foreground"
+                          className="flex-1 min-w-0 px-4 py-3 border border-border rounded-lg bg-surface text-center font-semibold text-foreground"
                         />
                         <button
                           type="button"
                           onClick={() => handleAncillaryBuildingsChange(10000)}
-                          className="w-10 h-10 rounded-lg bg-border-strong hover:bg-border-strong flex items-center justify-center text-brand-900 font-semibold transition-colors"
+                          className="shrink-0 w-10 h-10 rounded-lg border border-brand-200 bg-surface hover:bg-brand-50 flex items-center justify-center text-brand-700 text-lg font-bold transition-colors"
                         >
                           +
                         </button>
@@ -400,13 +400,13 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                   </div>
 
                   {/* Umístění bytu */}
-                  <div className="mt-4 mb-4 w-[calc((100%-1rem)/2)]">
+                  <div className="mt-4 mb-4 w-full sm:w-[calc((100%-1rem)/2)]">
                     <label className="block text-sm font-medium text-brand-900 mb-2">Umístění bytu</label>
                     <div className="relative flex items-center bg-surface-muted rounded-full p-1 w-full">
                       <button
                         type="button"
                         onClick={() => handleChange('apartmentLocation', 'rodinny-dum')}
-                        className={`flex-1 px-6 py-2 rounded-full font-medium text-sm transition-all relative z-10 whitespace-nowrap ${
+                        className={`flex-1 px-3 py-2 rounded-full font-medium text-sm transition-all relative z-10 whitespace-nowrap ${
                           formData.apartmentLocation === 'rodinny-dum'
                             ? 'bg-surface text-brand-600 border border-brand-600 shadow-sm'
                             : 'text-muted'
@@ -417,7 +417,7 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                       <button
                         type="button"
                         onClick={() => handleChange('apartmentLocation', 'bytovy-dum')}
-                        className={`flex-1 px-6 py-2 rounded-full font-medium text-sm transition-all relative z-10 whitespace-nowrap ${
+                        className={`flex-1 px-3 py-2 rounded-full font-medium text-sm transition-all relative z-10 whitespace-nowrap ${
                           formData.apartmentLocation === 'bytovy-dum'
                             ? 'bg-surface text-brand-600 border border-brand-600 shadow-sm'
                             : 'text-muted'
@@ -451,7 +451,7 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                     <button
                       type="button"
                       onClick={() => handleChange('apartmentConstruction', 'panel')}
-                      className={`flex-1 px-6 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
+                      className={`flex-1 px-3 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
                         formData.apartmentConstruction === 'panel'
                           ? 'bg-surface text-brand-600 border border-brand-600 shadow-sm'
                           : 'text-muted'
@@ -462,7 +462,7 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                     <button
                       type="button"
                       onClick={() => handleChange('apartmentConstruction', 'cihla')}
-                      className={`flex-1 px-6 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
+                      className={`flex-1 px-3 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
                         formData.apartmentConstruction === 'cihla'
                           ? 'bg-surface text-brand-600 border border-brand-600 shadow-sm'
                           : 'text-muted'
@@ -473,7 +473,7 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                     <button
                       type="button"
                       onClick={() => handleChange('apartmentConstruction', 'drevo')}
-                      className={`flex-1 px-6 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
+                      className={`flex-1 px-3 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
                         formData.apartmentConstruction === 'drevo'
                           ? 'bg-surface text-brand-600 border border-brand-600 shadow-sm'
                           : 'text-muted'
@@ -493,7 +493,7 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                       <button
                         type="button"
                         onClick={() => handleChange('apartmentQuality', 'standard')}
-                        className={`flex-1 px-6 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
+                        className={`flex-1 px-3 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
                           formData.apartmentQuality === 'standard'
                             ? 'bg-surface text-brand-600 border border-brand-600 shadow-sm'
                             : 'text-muted'
@@ -504,7 +504,7 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                       <button
                         type="button"
                         onClick={() => handleChange('apartmentQuality', 'nadstandard')}
-                        className={`flex-1 px-6 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
+                        className={`flex-1 px-3 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
                           formData.apartmentQuality === 'nadstandard'
                             ? 'bg-surface text-brand-600 border border-brand-600 shadow-sm'
                             : 'text-muted'
@@ -564,7 +564,7 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                       <button
                         type="button"
                         onClick={() => handleChange('hasBalconyOrTerrace', false)}
-                        className={`px-6 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
+                        className={`px-3 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
                           !formData.hasBalconyOrTerrace
                             ? 'bg-surface text-brand-600 border border-brand-600 shadow-sm'
                             : 'text-muted'
@@ -575,7 +575,7 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                       <button
                         type="button"
                         onClick={() => handleChange('hasBalconyOrTerrace', true)}
-                        className={`px-6 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
+                        className={`px-3 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
                           formData.hasBalconyOrTerrace
                             ? 'bg-surface text-brand-600 border border-brand-600 shadow-sm'
                             : 'text-muted'
@@ -690,7 +690,7 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                       type="text"
                       value={formatCurrency(formData.propertyValue)}
                       readOnly
-                      className="flex-1 px-4 py-3 border border-border rounded-lg bg-surface text-center font-semibold text-foreground"
+                      className="flex-1 min-w-0 px-4 py-3 border border-border rounded-lg bg-surface text-center font-semibold text-foreground"
                     />
                     <button
                       type="button"
@@ -724,7 +724,7 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                 <button
                   type="button"
                   onClick={() => handleChange('insuranceDomacnost', false)}
-                  className={`px-6 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
+                  className={`px-3 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
                     !formData.insuranceDomacnost
                       ? 'bg-surface text-brand-600 border border-brand-600 shadow-sm'
                       : 'text-muted'
@@ -735,7 +735,7 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                 <button
                   type="button"
                   onClick={() => handleChange('insuranceDomacnost', true)}
-                  className={`px-6 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
+                  className={`px-3 py-2 rounded-full font-medium text-sm transition-all relative z-10 ${
                     formData.insuranceDomacnost
                       ? 'bg-surface text-brand-600 border border-brand-600 shadow-sm'
                       : 'text-muted'
@@ -764,7 +764,7 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                       <button
                         type="button"
                         onClick={() => handleHouseholdValueChange('householdValue', -10000)}
-                        className="w-10 h-10 rounded-lg bg-border-strong hover:bg-border-strong flex items-center justify-center text-brand-900 font-semibold transition-colors"
+                        className="shrink-0 w-10 h-10 rounded-lg border border-brand-200 bg-surface hover:bg-brand-50 flex items-center justify-center text-brand-700 text-lg font-bold transition-colors"
                       >
                         −
                       </button>
@@ -772,12 +772,12 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                         type="text"
                         value={formatCurrency(formData.householdValue || 0)}
                         readOnly
-                        className="flex-1 px-4 py-3 border border-border rounded-lg bg-surface text-center font-semibold text-foreground"
+                        className="flex-1 min-w-0 px-4 py-3 border border-border rounded-lg bg-surface text-center font-semibold text-foreground"
                       />
                       <button
                         type="button"
                         onClick={() => handleHouseholdValueChange('householdValue', 10000)}
-                        className="w-10 h-10 rounded-lg bg-border-strong hover:bg-border-strong flex items-center justify-center text-brand-900 font-semibold transition-colors"
+                        className="shrink-0 w-10 h-10 rounded-lg border border-brand-200 bg-surface hover:bg-brand-50 flex items-center justify-center text-brand-700 text-lg font-bold transition-colors"
                       >
                         +
                       </button>
@@ -794,7 +794,7 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                       <button
                         type="button"
                         onClick={() => handleHouseholdValueChange('specialValueItems', -10000)}
-                        className="w-10 h-10 rounded-lg bg-border-strong hover:bg-border-strong flex items-center justify-center text-brand-900 font-semibold transition-colors"
+                        className="shrink-0 w-10 h-10 rounded-lg border border-brand-200 bg-surface hover:bg-brand-50 flex items-center justify-center text-brand-700 text-lg font-bold transition-colors"
                       >
                         −
                       </button>
@@ -802,12 +802,12 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                         type="text"
                         value={formatCurrency(formData.specialValueItems || 0)}
                         readOnly
-                        className="flex-1 px-4 py-3 border border-border rounded-lg bg-surface text-center font-semibold text-foreground"
+                        className="flex-1 min-w-0 px-4 py-3 border border-border rounded-lg bg-surface text-center font-semibold text-foreground"
                       />
                       <button
                         type="button"
                         onClick={() => handleHouseholdValueChange('specialValueItems', 10000)}
-                        className="w-10 h-10 rounded-lg bg-border-strong hover:bg-border-strong flex items-center justify-center text-brand-900 font-semibold transition-colors"
+                        className="shrink-0 w-10 h-10 rounded-lg border border-brand-200 bg-surface hover:bg-brand-50 flex items-center justify-center text-brand-700 text-lg font-bold transition-colors"
                       >
                         +
                       </button>
@@ -824,7 +824,7 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                       <button
                         type="button"
                         onClick={() => handleHouseholdValueChange('equipmentAndFixedItems', -10000)}
-                        className="w-10 h-10 rounded-lg bg-border-strong hover:bg-border-strong flex items-center justify-center text-brand-900 font-semibold transition-colors"
+                        className="shrink-0 w-10 h-10 rounded-lg border border-brand-200 bg-surface hover:bg-brand-50 flex items-center justify-center text-brand-700 text-lg font-bold transition-colors"
                       >
                         −
                       </button>
@@ -832,12 +832,12 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                         type="text"
                         value={formatCurrency(formData.equipmentAndFixedItems || 0)}
                         readOnly
-                        className="flex-1 px-4 py-3 border border-border rounded-lg bg-surface text-center font-semibold text-foreground"
+                        className="flex-1 min-w-0 px-4 py-3 border border-border rounded-lg bg-surface text-center font-semibold text-foreground"
                       />
                       <button
                         type="button"
                         onClick={() => handleHouseholdValueChange('equipmentAndFixedItems', 10000)}
-                        className="w-10 h-10 rounded-lg bg-border-strong hover:bg-border-strong flex items-center justify-center text-brand-900 font-semibold transition-colors"
+                        className="shrink-0 w-10 h-10 rounded-lg border border-brand-200 bg-surface hover:bg-brand-50 flex items-center justify-center text-brand-700 text-lg font-bold transition-colors"
                       >
                         +
                       </button>
@@ -854,7 +854,7 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                       <button
                         type="button"
                         onClick={() => handleHouseholdValueChange('nonResidentialItems', -10000)}
-                        className="w-10 h-10 rounded-lg bg-border-strong hover:bg-border-strong flex items-center justify-center text-brand-900 font-semibold transition-colors"
+                        className="shrink-0 w-10 h-10 rounded-lg border border-brand-200 bg-surface hover:bg-brand-50 flex items-center justify-center text-brand-700 text-lg font-bold transition-colors"
                       >
                         −
                       </button>
@@ -862,12 +862,12 @@ export default function Step2PropertyDetails({ formData, onDataChange, onNext, o
                         type="text"
                         value={formatCurrency(formData.nonResidentialItems || 0)}
                         readOnly
-                        className="flex-1 px-4 py-3 border border-border rounded-lg bg-surface text-center font-semibold text-foreground"
+                        className="flex-1 min-w-0 px-4 py-3 border border-border rounded-lg bg-surface text-center font-semibold text-foreground"
                       />
                       <button
                         type="button"
                         onClick={() => handleHouseholdValueChange('nonResidentialItems', 10000)}
-                        className="w-10 h-10 rounded-lg bg-border-strong hover:bg-border-strong flex items-center justify-center text-brand-900 font-semibold transition-colors"
+                        className="shrink-0 w-10 h-10 rounded-lg border border-brand-200 bg-surface hover:bg-brand-50 flex items-center justify-center text-brand-700 text-lg font-bold transition-colors"
                       >
                         +
                       </button>

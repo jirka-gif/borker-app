@@ -42,8 +42,10 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
         )}
         <div
           className={`${
-            fullWidth ? 'flex w-full' : 'inline-flex flex-wrap'
-          } items-center gap-1 rounded-full bg-surface-muted p-1`}
+            fullWidth
+              ? 'flex w-full flex-col sm:flex-row sm:items-center'
+              : 'inline-flex flex-wrap items-center'
+          } gap-1 rounded-2xl bg-surface-muted p-1 sm:rounded-full`}
         >
           {options.map((option) => {
             const isChecked = currentValue === option.value;
