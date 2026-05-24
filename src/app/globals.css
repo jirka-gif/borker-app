@@ -132,6 +132,26 @@
     color: rgb(var(--foreground));
   }
 
+  /* Date/time inputy nikdy nepřetečou svůj rámeček (hlavně iOS Safari). */
+  input[type="date"],
+  input[type="time"],
+  input[type="datetime-local"],
+  input[type="month"] {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  /* Na telefonech vypneme nativní rendering, který na iOS způsobuje přetékání. */
+  @media (max-width: 640px) {
+    input[type="date"],
+    input[type="time"],
+    input[type="datetime-local"],
+    input[type="month"] {
+      -webkit-appearance: none;
+      appearance: none;
+    }
+  }
+
   html[data-theme="dark"] body {
     background-image:
       radial-gradient(
