@@ -18,6 +18,17 @@ const STANDARD_ADDONS = [
   { key: 'zivelni-rizika', label: 'Živelná rizika' },
 ];
 
+// Nabízené obchodní slevy (% z pojistného).
+const DISCOUNT_OPTIONS = [0, 5, 10, 15, 20];
+
+// Mock voucher kódy → sleva v %. V reálu validuje backend.
+const DISCOUNT_VOUCHERS: Record<string, number> = {
+  STAR5: 5,
+  STAR10: 10,
+  STAR20: 20,
+  VITEJTE: 15,
+};
+
 // Mock 3 nejlepších nabídek (v reálu z API pojišťoven).
 const RICH_OFFERS: OfferCardData[] = [
   {
@@ -94,21 +105,48 @@ export const VehicleInsuranceCalculationPage: React.FC<VehicleInsuranceCalculati
   const [hoveredOfferIndex, setHoveredOfferIndex] = useState<number | null>(null);
   const [selectedOfferId, setSelectedOfferId] = useState<string>(RICH_OFFERS[0].id);
   const [hoverPosition, setHoverPosition] = useState<{ x: number; y: number } | null>(null);
-  const [showDiscountModal, setShowDiscountModal] = useState<string | null>(null);
   const [showEditParametersModal, setShowEditParametersModal] = useState(false);
-  const [discountValues, setDiscountValues] = useState<{
-    pov: string;
-    hav: string;
-    marketingPov: string;
-    marketingHav: string;
-    voucher: string;
-  }>({
-    pov: '',
-    hav: '',
-    marketingPov: '',
-    marketingHav: '',
-    voucher: '',
-  });
+  // Modal slev – id nabídky, jejíž slevu zrovna upravujeme (null = zavřeno).
+  const [showDiscountModal, setShowDiscountModal] = useState<string | null>(null);
+  // Uplatněné slevy per nabídka (id → %).
+  const [discounts, setDiscounts] = useState<Record<string, number>>({});
+  // Pracovní stav modalu.
+  const [modalPercent, setModalPercent] = useState(0);
+  const [voucherInput, setVoucherInput] = useState('');
+  const [voucherMsg, setVoucherMsg] = useState<{ ok: boolean; text: string } | null>(null);
+
+  const discountFor = (id: string) => discounts[id] || 0;
+
+  const openDiscountModal = (id: string) => {
+    setShowDiscountModal(id);
+    setModalPercent(discountFor(id));
+    setVoucherInput('');
+    setVoucherMsg(null);
+  };
+
+  const closeDiscountModal = () => {
+    setShowDiscountModal(null);
+    setVoucherInput('');
+    setVoucherMsg(null);
+  };
+
+  const applyVoucher = () => {
+    const code = voucherInput.trim().toUpperCase();
+    if (!code) return;
+    const found = DISCOUNT_VOUCHERS[code];
+    if (found) {
+      setModalPercent(found);
+      setVoucherMsg({ ok: true, text: `Voucher ${code} uplatněn – sleva ${found} %.` });
+    } else {
+      setVoucherMsg({ ok: false, text: 'Neplatný kód voucheru.' });
+    }
+  };
+
+  const confirmDiscount = () => {
+    if (!showDiscountModal) return;
+    setDiscounts((prev) => ({ ...prev, [showDiscountModal]: modalPercent }));
+    closeDiscountModal();
+  };
 
   // Mock data - v produkci by přišly z API
   const offerNumber = '1982899';
@@ -443,6 +481,8 @@ export const VehicleInsuranceCalculationPage: React.FC<VehicleInsuranceCalculati
                 offer={offer}
                 selected={selectedOfferId === offer.id}
                 onSelect={() => setSelectedOfferId(offer.id)}
+                discountPercent={discountFor(offer.id)}
+                onApplyDiscount={() => openDiscountModal(offer.id)}
               />
             ))}
           </div>
@@ -629,18 +669,21 @@ export const VehicleInsuranceCalculationPage: React.FC<VehicleInsuranceCalculati
 
       {/* Modální okno pro obchodní slevy */}
       {showDiscountModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-surface rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+          onClick={closeDiscountModal}
+        >
+          <div
+            className="bg-surface rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
             {/* Header */}
             <div className="bg-gradient-to-r from-[#C63D56] via-[#8B1E38] to-[#A82844] px-6 py-4 rounded-t-2xl">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-white">Obchodní slevy</h3>
                 <button
                   type="button"
-                  onClick={() => {
-                    setShowDiscountModal(null);
-                    setDiscountValues({ pov: '', hav: '', marketingPov: '', marketingHav: '', voucher: '' });
-                  }}
+                  onClick={closeDiscountModal}
                   className="text-white hover:text-subtle transition-colors"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -651,105 +694,76 @@ export const VehicleInsuranceCalculationPage: React.FC<VehicleInsuranceCalculati
             </div>
 
             {/* Content */}
-            <div className="p-6 space-y-4">
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-foreground">
-                  POV(max. 20%):
-                </label>
-                <input
-                  type="number"
-                  value={discountValues.pov}
-                  onChange={(e) => setDiscountValues({ ...discountValues, pov: e.target.value })}
-                  className="rounded-lg border border-border px-3 py-2 text-sm focus:border-[#A82844] focus:ring-2 focus:ring-[#A82844]/70 focus:outline-none"
-                  placeholder="0"
-                  min="0"
-                  max="20"
-                />
+            <div className="p-6 space-y-5">
+              {/* Výběr slevy */}
+              <div>
+                <label className="mb-2 block text-sm font-medium text-foreground">Výše slevy</label>
+                <div className="flex flex-wrap gap-2">
+                  {DISCOUNT_OPTIONS.map((d) => (
+                    <button
+                      key={d}
+                      type="button"
+                      onClick={() => {
+                        setModalPercent(d);
+                        setVoucherMsg(null);
+                      }}
+                      className={`rounded-lg border px-3.5 py-2 text-sm font-medium transition-colors ${
+                        modalPercent === d
+                          ? 'border-[#A82844] bg-brand-50 text-[#A82844]'
+                          : 'border-border bg-surface text-foreground hover:border-border-strong'
+                      }`}
+                    >
+                      {d === 0 ? 'Bez slevy' : `${d} %`}
+                    </button>
+                  ))}
+                </div>
               </div>
 
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-foreground">
-                  HAV(max. 20%):
+              {/* Voucher */}
+              <div>
+                <label className="mb-2 block text-sm font-medium text-foreground">
+                  …nebo zadejte kód voucheru
                 </label>
-                <input
-                  type="number"
-                  value={discountValues.hav}
-                  onChange={(e) => setDiscountValues({ ...discountValues, hav: e.target.value })}
-                  className="rounded-lg border border-border px-3 py-2 text-sm focus:border-[#A82844] focus:ring-2 focus:ring-[#A82844]/70 focus:outline-none"
-                  placeholder="0"
-                  min="0"
-                  max="20"
-                />
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-foreground">
-                  Marketingová akce POV(max. 25%):
-                </label>
-                <input
-                  type="number"
-                  value={discountValues.marketingPov}
-                  onChange={(e) => setDiscountValues({ ...discountValues, marketingPov: e.target.value })}
-                  className="rounded-lg border border-border px-3 py-2 text-sm focus:border-[#A82844] focus:ring-2 focus:ring-[#A82844]/70 focus:outline-none"
-                  placeholder="0"
-                  min="0"
-                  max="25"
-                />
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-foreground">
-                  Marketingová akce HAV(max. 25%):
-                </label>
-                <input
-                  type="number"
-                  value={discountValues.marketingHav}
-                  onChange={(e) => setDiscountValues({ ...discountValues, marketingHav: e.target.value })}
-                  className="rounded-lg border border-border px-3 py-2 text-sm focus:border-[#A82844] focus:ring-2 focus:ring-[#A82844]/70 focus:outline-none"
-                  placeholder="0"
-                  min="0"
-                  max="25"
-                />
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-foreground">
-                  Voucher:
-                </label>
-                <div className="relative">
+                <div className="flex gap-2">
                   <input
                     type="text"
-                    value={discountValues.voucher}
-                    onChange={(e) => setDiscountValues({ ...discountValues, voucher: e.target.value })}
-                    className="rounded-lg border border-border px-3 py-2 pr-10 text-sm focus:border-[#A82844] focus:ring-2 focus:ring-[#A82844]/70 focus:outline-none w-full"
-                    placeholder="Zadejte kód voucheru"
+                    value={voucherInput}
+                    onChange={(e) => setVoucherInput(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && applyVoucher()}
+                    className="min-w-0 flex-1 rounded-lg border border-border px-3 py-2 text-sm focus:border-[#A82844] focus:ring-2 focus:ring-[#A82844]/70 focus:outline-none"
+                    placeholder="Např. STAR10"
                   />
-                  <span className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                    🔍
-                  </span>
+                  <button
+                    type="button"
+                    onClick={applyVoucher}
+                    className="shrink-0 rounded-lg border border-[#A82844] px-4 py-2 text-sm font-medium text-[#A82844] transition-colors hover:bg-brand-50"
+                  >
+                    Použít
+                  </button>
                 </div>
+                {voucherMsg && (
+                  <p className={`mt-2 text-xs font-medium ${voucherMsg.ok ? 'text-success' : 'text-danger'}`}>
+                    {voucherMsg.text}
+                  </p>
+                )}
+              </div>
+
+              {/* Souhrn */}
+              <div className="rounded-lg bg-surface-muted px-4 py-3 text-sm">
+                {modalPercent > 0 ? (
+                  <span className="font-medium text-foreground">
+                    Uplatněná sleva: <span className="text-[#A82844]">{modalPercent} %</span>
+                  </span>
+                ) : (
+                  <span className="text-muted">Zatím není zvolena žádná sleva.</span>
+                )}
               </div>
             </div>
 
             {/* Footer */}
             <div className="px-6 py-4 border-t border-border flex gap-3 justify-end">
-              <SecondaryButton
-                onClick={() => {
-                  setShowDiscountModal(null);
-                  setDiscountValues({ pov: '', hav: '', marketingPov: '', marketingHav: '', voucher: '' });
-                }}
-              >
-                Zrušit
-              </SecondaryButton>
-              <PrimaryButton
-                onClick={() => {
-                  // TODO: Uložit slevy
-                  console.log('Slevy:', discountValues);
-                  setShowDiscountModal(null);
-                }}
-              >
-                Uložit
-              </PrimaryButton>
+              <SecondaryButton onClick={closeDiscountModal}>Zrušit</SecondaryButton>
+              <PrimaryButton onClick={confirmDiscount}>Uplatnit slevu</PrimaryButton>
             </div>
           </div>
         </div>

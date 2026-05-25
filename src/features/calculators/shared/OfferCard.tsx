@@ -115,9 +115,19 @@ interface OfferCardProps {
   offer: OfferCardData;
   selected: boolean;
   onSelect: () => void;
+  /** Sleva v % uplatněná na cenu (0 = bez slevy). */
+  discountPercent?: number;
+  /** Když je předáno, zobrazí se tlačítko „Slevy" otevírající modal. */
+  onApplyDiscount?: () => void;
 }
 
-export function OfferCard({ offer, selected, onSelect }: OfferCardProps) {
+export function OfferCard({
+  offer,
+  selected,
+  onSelect,
+  discountPercent = 0,
+  onApplyDiscount,
+}: OfferCardProps) {
   const [active, setActive] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(offer.addons.map((a) => [a.key, Boolean(a.defaultOn)])),
   );
@@ -253,13 +263,36 @@ export function OfferCard({ offer, selected, onSelect }: OfferCardProps) {
         </button>
       </div>
 
+      {/* Tlačítko slev (volitelné) */}
+      {onApplyDiscount && (
+        <div className="mt-4 px-5">
+          <button
+            type="button"
+            onClick={onApplyDiscount}
+            className="w-full rounded-lg bg-brand-100 px-4 py-2 text-sm font-medium text-brand-700 transition-colors hover:bg-brand-200"
+          >
+            {discountPercent > 0 ? `Sleva ${discountPercent} % uplatněna` : 'Uplatnit slevy'}
+          </button>
+        </div>
+      )}
+
       {/* Patička – cena */}
       <div className="mt-4 border-t border-border bg-surface-muted px-5 py-4 text-center">
+        {discountPercent > 0 && (
+          <div className="text-sm text-muted line-through">
+            {formatCzk(offer.totalPrice)}
+            {priceSuffix && <span> {priceSuffix}</span>}
+          </div>
+        )}
         <div className="text-xl font-bold text-foreground">
-          {formatCzk(offer.totalPrice)}
+          {formatCzk(Math.round(offer.totalPrice * (1 - discountPercent / 100)))}
           {priceSuffix && <span className="text-sm font-medium text-muted"> {priceSuffix}</span>}
         </div>
-        {priceNote && <div className="mt-0.5 text-xs text-muted">{priceNote}</div>}
+        {discountPercent > 0 ? (
+          <div className="mt-0.5 text-xs font-semibold text-success">Sleva {discountPercent} %</div>
+        ) : (
+          priceNote && <div className="mt-0.5 text-xs text-muted">{priceNote}</div>
+        )}
       </div>
     </div>
   );
