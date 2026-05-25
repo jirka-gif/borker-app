@@ -43,9 +43,14 @@ export function mapCarResponseToOffers(res: CarCalculateResponse): OfferCardData
     const coverages: OfferCoverage[] = (result.packages ?? []).map((p) => ({
       key: p.code,
       label: p.name,
-      value: czk(p.price),
+      value: Number.isFinite(Number(p.price)) ? czk(Number(p.price)) : '—',
       included: true,
     }));
+
+    // Robustně: priceAfterSale nebo price, ošetřeno proti NaN.
+    const raw = result.priceAfterSale ?? result.price;
+    const price = Number(raw);
+    const totalPrice = Number.isFinite(price) ? price : 0;
 
     return {
       id: apiEnum,
@@ -54,7 +59,7 @@ export function mapCarResponseToOffers(res: CarCalculateResponse): OfferCardData
       productName: 'Pojištění vozidla',
       coverages,
       addons: [],
-      totalPrice: result.priceAfterSale || result.price,
+      totalPrice,
     };
   });
 

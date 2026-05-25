@@ -170,6 +170,8 @@ export const VehicleInsuranceCalculationPage: React.FC<VehicleInsuranceCalculati
         body: JSON.stringify(payload),
       });
       const data = (await res.json()) as CarCalculateResponse & { error?: string };
+      // Dočasné: ukáže přesný tvar odpovědi v konzoli prohlížeče (Vývojář → Konzole).
+      console.log('[frenk] calculate response:', JSON.stringify(data, null, 2));
       if (!res.ok) {
         throw new Error(data.error || `Chyba ${res.status}`);
       }

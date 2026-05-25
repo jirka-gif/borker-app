@@ -87,9 +87,9 @@ export const VehicleInsuranceAdditionalPage: React.FC<VehicleInsuranceAdditional
     }
   };
 
-  const onSubmit = (data: VehicleInsuranceAdditionalForm) => {
-    console.log('Form data:', data);
-    // TODO: Save to backend / navigate to next step
+  const onSubmit = (_data: VehicleInsuranceAdditionalForm) => {
+    // Posun na krok 3 (Kalkulace). Uložení do backendu se doplní později.
+    onStepChange?.(3);
   };
 
   return (
@@ -377,7 +377,7 @@ export const VehicleInsuranceAdditionalPage: React.FC<VehicleInsuranceAdditional
                         <span className="px-3 py-2 border border-border rounded-lg bg-surface-muted text-sm text-foreground">Kč</span>
                         <Input
                           type="number"
-                          register={register('vehicle.vehiclePrice', { required: 'Povinné pole', valueAsNumber: true })}
+                          register={register('vehicle.vehiclePrice', { required: hasCascoInsurance ? 'Povinné pole' : false, valueAsNumber: true })}
                           error={errors.vehicle?.vehiclePrice?.message}
                           className="flex-1"
                           wrapperClassName="mb-0"
