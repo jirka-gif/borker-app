@@ -45,14 +45,17 @@ export function DestinationCards({ name, options, label, className = '', rules }
                     className={`relative rounded-xl border-2 p-5 text-left transition-all ${
                       isSelected
                         ? 'border-brand-600 bg-brand-50 shadow-sm'
-                        : 'border-border bg-surface hover:border-border-strong'
+                        : 'border-border bg-surface hover:border-border-strong hover:bg-surface-muted'
                     }`}
                   >
-                    {isSelected && (
-                      <span className="absolute right-2.5 top-2.5 flex h-5 w-5 items-center justify-center rounded-full bg-brand-600">
-                        <Check className="h-3 w-3 text-white" strokeWidth={3} />
-                      </span>
-                    )}
+                    {/* Zaškrtávací políčko v rohu */}
+                    <span
+                      className={`absolute right-2.5 top-2.5 flex h-5 w-5 items-center justify-center rounded-md border-2 transition-colors ${
+                        isSelected ? 'border-brand-600 bg-brand-600' : 'border-border-strong bg-surface'
+                      }`}
+                    >
+                      {isSelected && <Check className="h-3.5 w-3.5 text-white" strokeWidth={3} />}
+                    </span>
                     <div className="flex flex-col items-center text-center">
                       <div className="mb-3 flex h-14 w-14 items-center justify-center">
                         {option.icon}
