@@ -113,6 +113,7 @@ export const VehicleInsuranceCalculationPage: React.FC<VehicleInsuranceCalculati
   const [liveOffers, setLiveOffers] = useState<OfferCardData[] | null>(null);
   const [liveLoading, setLiveLoading] = useState(false);
   const [liveError, setLiveError] = useState<string | null>(null);
+  const [liveCarrierErrors, setLiveCarrierErrors] = useState<{ insurer: string; message: string }[]>([]);
 
   // Reálné volání BFF. Vstup je zatím ukázkový (mapování polí z formuláře je další krok).
   const loadLiveOffers = async () => {
@@ -175,8 +176,15 @@ export const VehicleInsuranceCalculationPage: React.FC<VehicleInsuranceCalculati
       if (!res.ok) {
         throw new Error(data.error || `Chyba ${res.status}`);
       }
-      const offers = mapCarResponseToOffers(data);
-      if (!offers.length) throw new Error('Žádná pojišťovna nevrátila nabídku.');
+      const { offers, errors } = mapCarResponseToOffers(data);
+      setLiveCarrierErrors(errors);
+      if (!offers.length) {
+        throw new Error(
+          errors.length
+            ? `Žádná pojišťovna nevrátila cenu (${errors.length}× chyba upstream).`
+            : 'Žádná pojišťovna nevrátila nabídku.',
+        );
+      }
       setLiveOffers(offers);
       setSelectedOfferId(offers[0].id);
     } catch (e) {
@@ -574,6 +582,19 @@ export const VehicleInsuranceCalculationPage: React.FC<VehicleInsuranceCalculati
             <div className="mb-4 rounded-lg border border-danger/30 bg-danger-bg px-4 py-3 text-sm text-danger">
               Nepodařilo se načíst živé nabídky: {liveError}
               <span className="block text-xs text-muted">Zobrazují se ukázková data.</span>
+            </div>
+          )}
+
+          {liveCarrierErrors.length > 0 && (
+            <div className="mb-4 rounded-lg border border-warning/30 bg-warning-bg px-4 py-3 text-sm text-warning">
+              <div className="font-medium">Některé pojišťovny nevrátily cenu:</div>
+              <ul className="mt-1 space-y-0.5 text-xs">
+                {liveCarrierErrors.map((e) => (
+                  <li key={e.insurer}>
+                    <span className="font-semibold">{e.insurer}:</span> {e.message}
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
 

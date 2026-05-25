@@ -117,9 +117,26 @@ export interface FrenkInsuranceResult {
   priceAfterSale: number;
   packages: FrenkPackage[];
   documents?: FrenkDocument[] | null;
+  bundledProduct?: boolean | null;
+  bundleIncludes?: string[] | null;
+  warnings?: Record<string, string> | null;
+}
+
+/** Když carrier kalkulaci nevrátí, přijde pod jeho klíčem tento chybový tvar. */
+export interface FrenkInsuranceError {
+  error: number;
+  message: string;
+  errors?: unknown;
+}
+
+export type FrenkInsuranceEntry = FrenkInsuranceResult | FrenkInsuranceError;
+
+/** Rozliší úspěšnou nabídku od chybové. */
+export function isFrenkError(entry: FrenkInsuranceEntry): entry is FrenkInsuranceError {
+  return typeof (entry as FrenkInsuranceError)?.error === 'number';
 }
 
 /** Odpověď: klíčem je apiEnum (např. "insurance-car-csob"). */
 export interface CarCalculateResponse {
-  insurances: Record<string, FrenkInsuranceResult>;
+  insurances: Record<string, FrenkInsuranceEntry>;
 }

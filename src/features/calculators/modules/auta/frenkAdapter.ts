@@ -5,7 +5,17 @@
  */
 
 import type { OfferCardData, OfferCoverage } from '../../shared/OfferCard';
-import type { CarCalculateResponse } from '@/lib/frenk/types';
+import { isFrenkError, type CarCalculateResponse } from '@/lib/frenk/types';
+
+export interface CarrierError {
+  insurer: string;
+  message: string;
+}
+
+export interface MappedOffers {
+  offers: OfferCardData[];
+  errors: CarrierError[];
+}
 
 interface CarrierMeta {
   name: string;
@@ -34,34 +44,41 @@ function czk(value: number): string {
   }).format(value);
 }
 
-/** Převede `insurances` z odpovědi na pole karet nabídek (seřazeno od nejlevnější). */
-export function mapCarResponseToOffers(res: CarCalculateResponse): OfferCardData[] {
+/** Převede `insurances` na karty nabídek + seznam pojišťoven, které vrátily chybu. */
+export function mapCarResponseToOffers(res: CarCalculateResponse): MappedOffers {
   const entries = Object.entries(res.insurances ?? {});
+  const offers: OfferCardData[] = [];
+  const errors: CarrierError[] = [];
 
-  const offers: OfferCardData[] = entries.map(([apiEnum, result]) => {
+  for (const [apiEnum, entry] of entries) {
     const meta = CARRIERS[apiEnum] ?? { name: apiEnum, logo: '?' };
-    const coverages: OfferCoverage[] = (result.packages ?? []).map((p) => ({
+
+    if (isFrenkError(entry)) {
+      errors.push({ insurer: meta.name, message: entry.message || `Chyba ${entry.error}` });
+      continue;
+    }
+
+    const coverages: OfferCoverage[] = (entry.packages ?? []).map((p) => ({
       key: p.code,
       label: p.name,
       value: Number.isFinite(Number(p.price)) ? czk(Number(p.price)) : '—',
       included: true,
     }));
 
-    // Robustně: priceAfterSale nebo price, ošetřeno proti NaN.
-    const raw = result.priceAfterSale ?? result.price;
+    const raw = entry.priceAfterSale ?? entry.price;
     const price = Number(raw);
-    const totalPrice = Number.isFinite(price) ? price : 0;
 
-    return {
+    offers.push({
       id: apiEnum,
       insurer: meta.name,
       logoText: meta.logo,
       productName: 'Pojištění vozidla',
       coverages,
       addons: [],
-      totalPrice,
-    };
-  });
+      totalPrice: Number.isFinite(price) ? price : 0,
+    });
+  }
 
-  return offers.sort((a, b) => a.totalPrice - b.totalPrice);
+  offers.sort((a, b) => a.totalPrice - b.totalPrice);
+  return { offers, errors };
 }
