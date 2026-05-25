@@ -7,6 +7,14 @@ import { openOffersPdf, type PropertyOffersPdfData } from '../propertyOffersPdf'
 /** Nabízené slevy (% z pojistného). */
 const DISCOUNT_OPTIONS = [0, 5, 10, 15, 20]
 
+/** Mock voucher kódy → sleva v %. V reálu validuje backend. */
+const DISCOUNT_VOUCHERS: Record<string, number> = {
+  STAR5: 5,
+  STAR10: 10,
+  STAR20: 20,
+  VITEJTE: 15,
+}
+
 interface Step3CalculationProps {
   formData: FormData
   onDataChange: (data: Partial<FormData>) => void
@@ -97,11 +105,46 @@ export default function Step3Calculation({ formData, onDataChange, onNext, onBac
   ])
 
   const [selectedOffers, setSelectedOffers] = useState<InsuranceOffer[]>(offers)
-  // Sleva v % per nabídka + které nabídce je zrovna otevřený výběr slevy.
+  // Sleva v % per nabídka (index → %).
   const [discounts, setDiscounts] = useState<Record<number, number>>({})
-  const [openDiscount, setOpenDiscount] = useState<number | null>(null)
+  // Modal slev – index nabídky, jejíž slevu upravujeme (null = zavřeno).
+  const [discountModal, setDiscountModal] = useState<number | null>(null)
+  const [modalPercent, setModalPercent] = useState(0)
+  const [voucherInput, setVoucherInput] = useState('')
+  const [voucherMsg, setVoucherMsg] = useState<{ ok: boolean; text: string } | null>(null)
 
   const discountFor = (index: number) => discounts[index] || 0
+
+  const openDiscountModal = (index: number) => {
+    setDiscountModal(index)
+    setModalPercent(discountFor(index))
+    setVoucherInput('')
+    setVoucherMsg(null)
+  }
+
+  const closeDiscountModal = () => {
+    setDiscountModal(null)
+    setVoucherInput('')
+    setVoucherMsg(null)
+  }
+
+  const applyVoucher = () => {
+    const code = voucherInput.trim().toUpperCase()
+    if (!code) return
+    const found = DISCOUNT_VOUCHERS[code]
+    if (found) {
+      setModalPercent(found)
+      setVoucherMsg({ ok: true, text: `Voucher ${code} uplatněn – sleva ${found} %.` })
+    } else {
+      setVoucherMsg({ ok: false, text: 'Neplatný kód voucheru.' })
+    }
+  }
+
+  const confirmDiscount = () => {
+    if (discountModal === null) return
+    setDiscounts((prev) => ({ ...prev, [discountModal]: modalPercent }))
+    closeDiscountModal()
+  }
 
   const handleToggleOption = (offerIndex: number, optionId: string) => {
     const updated = [...selectedOffers]
@@ -324,35 +367,11 @@ export default function Step3Calculation({ formData, onDataChange, onNext, onBac
                 <div className="pt-4 space-y-2 border-t border-border">
                   <button
                     type="button"
-                    onClick={() => setOpenDiscount(openDiscount === index ? null : index)}
+                    onClick={() => openDiscountModal(index)}
                     className="w-full px-4 py-2 bg-brand-100 hover:bg-brand-200 text-brand-700 rounded-lg text-sm font-medium transition-colors"
                   >
                     {discount > 0 ? `Sleva ${discount} % uplatněna` : 'Uplatnit slevu'}
                   </button>
-                  {openDiscount === index && (
-                    <div className="rounded-lg border border-border bg-surface-muted p-3">
-                      <div className="mb-2 text-xs font-medium text-muted">Zvolte výši slevy</div>
-                      <div className="flex flex-wrap gap-2">
-                        {DISCOUNT_OPTIONS.map((d) => (
-                          <button
-                            key={d}
-                            type="button"
-                            onClick={() => {
-                              setDiscounts((prev) => ({ ...prev, [index]: d }))
-                              setOpenDiscount(null)
-                            }}
-                            className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
-                              discount === d
-                                ? 'border-brand-600 bg-brand-50 text-brand-700'
-                                : 'border-border bg-surface text-foreground hover:border-border-strong'
-                            }`}
-                          >
-                            {d === 0 ? 'Bez slevy' : `${d} %`}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
                   <button
                     onClick={() => {
                       onDataChange({ selectedOffer: offer })
@@ -448,6 +467,108 @@ export default function Step3Calculation({ formData, onDataChange, onNext, onBac
           Pokračovat
         </button>
       </div>
+
+      {/* Modální okno pro obchodní slevy */}
+      {discountModal !== null && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+          onClick={closeDiscountModal}
+        >
+          <div
+            className="bg-surface rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="bg-gradient-to-r from-brand-500 via-brand-700 to-brand-600 px-6 py-4 rounded-t-2xl">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-white">Obchodní slevy</h3>
+                <button type="button" onClick={closeDiscountModal} className="text-white transition-colors hover:text-white/70">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6 space-y-5">
+              <div>
+                <label className="mb-2 block text-sm font-medium text-foreground">Výše slevy</label>
+                <div className="flex flex-wrap gap-2">
+                  {DISCOUNT_OPTIONS.map((d) => (
+                    <button
+                      key={d}
+                      type="button"
+                      onClick={() => {
+                        setModalPercent(d)
+                        setVoucherMsg(null)
+                      }}
+                      className={`rounded-lg border px-3.5 py-2 text-sm font-medium transition-colors ${
+                        modalPercent === d
+                          ? 'border-brand-600 bg-brand-50 text-brand-700'
+                          : 'border-border bg-surface text-foreground hover:border-border-strong'
+                      }`}
+                    >
+                      {d === 0 ? 'Bez slevy' : `${d} %`}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-medium text-foreground">…nebo zadejte kód voucheru</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={voucherInput}
+                    onChange={(e) => setVoucherInput(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && applyVoucher()}
+                    className="min-w-0 flex-1 rounded-lg border border-border px-3 py-2 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/70 focus:outline-none"
+                    placeholder="Např. STAR10"
+                  />
+                  <button
+                    type="button"
+                    onClick={applyVoucher}
+                    className="shrink-0 rounded-lg border border-brand-600 px-4 py-2 text-sm font-medium text-brand-600 transition-colors hover:bg-brand-50"
+                  >
+                    Použít
+                  </button>
+                </div>
+                {voucherMsg && (
+                  <p className={`mt-2 text-xs font-medium ${voucherMsg.ok ? 'text-success' : 'text-danger'}`}>
+                    {voucherMsg.text}
+                  </p>
+                )}
+              </div>
+
+              <div className="rounded-lg bg-surface-muted px-4 py-3 text-sm">
+                {modalPercent > 0 ? (
+                  <span className="font-medium text-foreground">
+                    Uplatněná sleva: <span className="text-brand-700">{modalPercent} %</span>
+                  </span>
+                ) : (
+                  <span className="text-muted">Zatím není zvolena žádná sleva.</span>
+                )}
+              </div>
+            </div>
+
+            <div className="px-6 py-4 border-t border-border flex gap-3 justify-end">
+              <button
+                type="button"
+                onClick={closeDiscountModal}
+                className="px-5 py-2.5 bg-surface-muted hover:bg-border-strong text-foreground font-semibold rounded-lg transition-colors text-sm"
+              >
+                Zrušit
+              </button>
+              <button
+                type="button"
+                onClick={confirmDiscount}
+                className="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-lg transition-colors text-sm"
+              >
+                Uplatnit slevu
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
