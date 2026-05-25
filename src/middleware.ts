@@ -41,5 +41,5 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   // Vynecháme statické soubory, API a Next interní cesty.
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.svg$).*)"],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.*\\.svg$).*)"],
 };

@@ -4,6 +4,8 @@ import { VEHICLE_STEPS } from './vehicleSteps';
 import { PrimaryButton, SecondaryButton } from '../components/ui/Button';
 import { VehicleInsuranceAdditionalPage } from './VehicleInsuranceAdditionalPage';
 import { OfferCard, type OfferCardData } from '../../../shared/OfferCard';
+import { mapCarResponseToOffers } from '../frenkAdapter';
+import type { CarApiEnum, CarCalculateInput, CarCalculateResponse } from '@/lib/frenk/types';
 
 // Standardní sada připojištění (v reálu vrací API pojišťovny).
 const STANDARD_ADDONS = [
@@ -106,6 +108,84 @@ export const VehicleInsuranceCalculationPage: React.FC<VehicleInsuranceCalculati
   const [selectedOfferId, setSelectedOfferId] = useState<string>(RICH_OFFERS[0].id);
   const [hoverPosition, setHoverPosition] = useState<{ x: number; y: number } | null>(null);
   const [showEditParametersModal, setShowEditParametersModal] = useState(false);
+
+  // Živé nabídky z Frenk API (null = zatím se použije mock RICH_OFFERS).
+  const [liveOffers, setLiveOffers] = useState<OfferCardData[] | null>(null);
+  const [liveLoading, setLiveLoading] = useState(false);
+  const [liveError, setLiveError] = useState<string | null>(null);
+
+  // Reálné volání BFF. Vstup je zatím ukázkový (mapování polí z formuláře je další krok).
+  const loadLiveOffers = async () => {
+    setLiveLoading(true);
+    setLiveError(null);
+    const apiEnums: CarApiEnum[] = [
+      'insurance-car-csob',
+      'insurance-car-kooperativa',
+      'insurance-car-cpp',
+      'insurance-car-slavia',
+      'insurance-car-pillow',
+    ];
+    const payload: CarCalculateInput = {
+      apiEnums,
+      beginDate: new Date().toISOString().slice(0, 10),
+      payment: { frequency: 'annually', paymentType: 'card' },
+      vehicle: {
+        usage: 'normal',
+        type: 'passenger',
+        fuelType: 'benzine',
+        brand: 'VOLVO',
+        model: 'XC40',
+        engineCapacityCc: 1498,
+        enginePowerKw: 96,
+        countPlace: 5,
+        maxWeight: 1840,
+        mileageKm: 120000,
+        actualValue: 400000,
+        vin: 'YV1XZK7V8R2253841',
+      },
+      liability: { selected: true, liabilityLimit: 150000 },
+      accident: { selected: false },
+      policyholder: {
+        type: 'physical',
+        firstName: 'Test',
+        lastName: 'Testovací',
+        birthNumber: '7001011116',
+        address: {
+          street: 'Nerudova',
+          city: 'Litoměřice',
+          houseNumber: '1059/34',
+          zip: '14000',
+          country: 'CZ',
+          wholeAddress: 'Nerudova 1059/34, Litoměřice',
+        },
+        email: 'test@email.cz',
+        phone: '777888999',
+      },
+    };
+
+    try {
+      const res = await fetch('/api/insurance/auta/calculate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = (await res.json()) as CarCalculateResponse & { error?: string };
+      if (!res.ok) {
+        throw new Error(data.error || `Chyba ${res.status}`);
+      }
+      const offers = mapCarResponseToOffers(data);
+      if (!offers.length) throw new Error('Žádná pojišťovna nevrátila nabídku.');
+      setLiveOffers(offers);
+      setSelectedOfferId(offers[0].id);
+    } catch (e) {
+      setLiveError(e instanceof Error ? e.message : 'Načtení nabídek selhalo.');
+    } finally {
+      setLiveLoading(false);
+    }
+  };
+
+  // Co se reálně zobrazí: živé nabídky, jinak mock.
+  const displayedOffers = liveOffers ?? RICH_OFFERS;
   // Modal slev – id nabídky, jejíž slevu zrovna upravujeme (null = zavřeno).
   const [showDiscountModal, setShowDiscountModal] = useState<string | null>(null);
   // Uplatněné slevy per nabídka (id → %).
@@ -471,11 +551,32 @@ export const VehicleInsuranceCalculationPage: React.FC<VehicleInsuranceCalculati
 
         {/* Sekce Nabídky pojistitelů */}
         <div className="mb-8">
-          <h2 className="text-lg font-semibold text-foreground mb-4">
-            Nabídky pojistitelů
-          </h2>
+          <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <h2 className="text-lg font-semibold text-foreground">
+              Nabídky pojistitelů
+              {liveOffers && (
+                <span className="ml-2 align-middle text-xs font-medium text-success">● živá data</span>
+              )}
+            </h2>
+            <button
+              type="button"
+              onClick={loadLiveOffers}
+              disabled={liveLoading}
+              className="inline-flex items-center justify-center gap-2 rounded-lg border border-[#A82844] px-4 py-2 text-sm font-medium text-[#A82844] transition-colors hover:bg-brand-50 disabled:opacity-60"
+            >
+              {liveLoading ? 'Načítám z pojišťoven…' : 'Načíst živé nabídky'}
+            </button>
+          </div>
+
+          {liveError && (
+            <div className="mb-4 rounded-lg border border-danger/30 bg-danger-bg px-4 py-3 text-sm text-danger">
+              Nepodařilo se načíst živé nabídky: {liveError}
+              <span className="block text-xs text-muted">Zobrazují se ukázková data.</span>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 items-start lg:grid-cols-3 gap-6">
-            {RICH_OFFERS.map((offer) => (
+            {displayedOffers.map((offer) => (
               <OfferCard
                 key={offer.id}
                 offer={offer}
