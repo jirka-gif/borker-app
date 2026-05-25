@@ -20,7 +20,6 @@ import { DatePicker } from '../../../components/ui/DatePicker';
 import { Input } from '../../../components/ui/Input';
 import { SelectField } from '../../../components/ui/SelectField';
 import { ToggleSwitch } from '../../../components/ui/ToggleSwitch';
-import { SelectableCTAButtons } from '../../../components/ui/SelectableCTAButtons';
 import { PrimaryButton, SecondaryButton } from '../../../components/ui/Button';
 import { Modal } from '../../../components/ui/Modal';
 import { TravelFormValues } from '../TravelInsuranceCalculator';
@@ -57,7 +56,7 @@ const destinationZoneOptions = [
   },
 ];
 
-const iconClass = 'h-6 w-6';
+const iconClass = 'h-10 w-10 text-brand-600';
 
 const transportationOptions = [
   { value: 'plane', label: 'Letadlem', icon: <Plane className={iconClass} strokeWidth={1.5} aria-hidden="true" /> },
@@ -334,7 +333,7 @@ export function TravelStepDestination({ onNext, onBack }: TravelStepDestinationP
               </Modal>
               <div className="space-y-6">
                 <div>
-                  <SelectableCTAButtons
+                  <DestinationCards
                     name="transportation"
                     label="Jak se dostanete do finální destinace? *"
                     options={transportationOptions}
@@ -342,9 +341,9 @@ export function TravelStepDestination({ onNext, onBack }: TravelStepDestinationP
                     rules={{ required: 'Doprava je povinná' }}
                   />
                 </div>
-                
+
                 <div>
-                  <SelectableCTAButtons
+                  <DestinationCards
                     name="tripType"
                     label="Jaký typ cesty Vás čeká? *"
                     options={tripTypeOptions}

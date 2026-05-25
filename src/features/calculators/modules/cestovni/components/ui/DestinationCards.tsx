@@ -5,7 +5,7 @@ import { useFormContext, Controller, RegisterOptions } from 'react-hook-form';
 export interface DestinationOption {
   value: string;
   label: string;
-  subtitle: string;
+  subtitle?: string;
   icon: React.ReactNode;
 }
 
@@ -64,7 +64,9 @@ export function DestinationCards({ name, options, label, className = '', rules }
                       >
                         {option.label}
                       </h3>
-                      <p className="text-xs leading-tight text-muted">{option.subtitle}</p>
+                      {option.subtitle && (
+                        <p className="text-xs leading-tight text-muted">{option.subtitle}</p>
+                      )}
                     </div>
                   </button>
                 );
