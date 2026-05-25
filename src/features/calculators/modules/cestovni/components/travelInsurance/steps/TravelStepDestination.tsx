@@ -235,13 +235,22 @@ export function TravelStepDestination({ onNext, onBack }: TravelStepDestinationP
                       </div>
                       
                       <div className="relative">
-                        <div className="mb-4">
-                          <h3 className="text-lg font-bold text-foreground mb-1">
-                            Cestuješ často? Cestuj chytře s celoročním cestovním pojištěním
-                          </h3>
-                          <p className="text-sm text-muted">
-                            Jedno pojištění pro všechny cesty během roku
-                          </p>
+                        <div className="mb-4 flex items-start gap-4">
+                          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-md">
+                            <Plane className="h-6 w-6" strokeWidth={1.8} aria-hidden="true" />
+                          </span>
+                          <div className="min-w-0">
+                            <span className="mb-1.5 inline-flex items-center gap-1 rounded-full bg-brand-600/10 px-2.5 py-0.5 text-2xs font-semibold uppercase tracking-wide text-brand-700">
+                              <Globe2 className="h-3 w-3" strokeWidth={2} aria-hidden="true" />
+                              Tip pro časté cestovatele
+                            </span>
+                            <h3 className="text-lg font-bold leading-snug text-foreground">
+                              Cestuješ často? Cestuj chytře s celoročním cestovním pojištěním
+                            </h3>
+                            <p className="mt-1 text-sm text-muted">
+                              Jedno pojištění pro všechny cesty během roku
+                            </p>
+                          </div>
                         </div>
                         
                         <div className="flex items-center gap-3 bg-surface rounded-lg p-4 shadow-sm mb-4">
