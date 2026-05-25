@@ -11,6 +11,7 @@ import {
   Mountain,
   Plane,
   Route,
+  ShieldCheck,
   Trophy,
   Umbrella,
 } from 'lucide-react';
@@ -352,17 +353,27 @@ export function TravelStepDestination({ onNext, onBack }: TravelStepDestinationP
                   />
                 </div>
                 
-                <div>
+                <div className="rounded-xl border-2 border-brand-200 bg-gradient-to-br from-brand-50 to-surface p-5 shadow-sm">
                   <Controller
                     name="needCancellationCoverage"
                     control={control}
                     render={({ field }) => (
                       <>
-                        <div className="mb-2">
-                          <label className="block text-sm font-medium text-foreground mb-2">
-                            Potřebuješ pokrýt případné storno cesty?
-                          </label>
-                          <div className="flex items-center gap-3">
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                          <div className="flex items-start gap-3">
+                            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-md">
+                              <ShieldCheck className="h-6 w-6" strokeWidth={1.8} aria-hidden="true" />
+                            </span>
+                            <div className="min-w-0">
+                              <h3 className="text-base font-bold leading-snug text-foreground">
+                                Potřebuješ pokrýt případné storno cesty?
+                              </h3>
+                              <p className="mt-0.5 text-sm text-muted">
+                                Když cestu nakonec zrušíš, pojišťovna ti proplatí storno poplatky.
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex shrink-0 items-center gap-3 self-start sm:self-center">
                             <span className={`text-sm font-medium ${!field.value ? 'text-foreground' : 'text-subtle'}`}>
                               Ne
                             </span>
@@ -377,12 +388,12 @@ export function TravelStepDestination({ onNext, onBack }: TravelStepDestinationP
                                   setValue('tripPrice', undefined);
                                 }
                               }}
-                              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 ${
+                              className={`relative inline-flex h-7 w-12 items-center rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 ${
                                 field.value ? 'bg-brand-600 shadow-md' : 'bg-border-strong'
                               }`}
                             >
                               <span
-                                className={`inline-block h-4 w-4 transform rounded-full bg-surface shadow-md transition-transform duration-300 ${
+                                className={`inline-block h-5 w-5 transform rounded-full bg-surface shadow-md transition-transform duration-300 ${
                                   field.value ? 'translate-x-6' : 'translate-x-1'
                                 }`}
                               />
@@ -392,9 +403,9 @@ export function TravelStepDestination({ onNext, onBack }: TravelStepDestinationP
                             </span>
                           </div>
                         </div>
-                        
+
                         {field.value && (
-                          <div className="mt-4 space-y-4">
+                          <div className="mt-5 space-y-4 border-t border-brand-200 pt-5">
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                               <SelectField
                                 name="cancellationType"
