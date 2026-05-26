@@ -113,7 +113,23 @@ export const VehicleInsuranceCalculationPage: React.FC<VehicleInsuranceCalculati
   const [liveOffers, setLiveOffers] = useState<OfferCardData[] | null>(null);
   const [liveLoading, setLiveLoading] = useState(false);
   const [liveError, setLiveError] = useState<string | null>(null);
-  const [liveCarrierErrors, setLiveCarrierErrors] = useState<{ insurer: string; message: string }[]>([]);
+  const [liveCarrierErrors, setLiveCarrierErrors] = useState<
+    { insurer: string; code: number; message: string; details: { message?: string | null; fields?: Array<string | null> }[] }[]
+  >([]);
+  const [lastRawResponse, setLastRawResponse] = useState<unknown>(null);
+  const [copyMsg, setCopyMsg] = useState<string | null>(null);
+
+  const copyRawJson = async () => {
+    if (!lastRawResponse) return;
+    try {
+      await navigator.clipboard.writeText(JSON.stringify(lastRawResponse, null, 2));
+      setCopyMsg('JSON zkopírován do schránky');
+      setTimeout(() => setCopyMsg(null), 2500);
+    } catch {
+      setCopyMsg('Kopírování selhalo');
+      setTimeout(() => setCopyMsg(null), 2500);
+    }
+  };
 
   // Reálné volání BFF. Vstup je zatím ukázkový (mapování polí z formuláře je další krok).
   const loadLiveOffers = async () => {
@@ -176,6 +192,7 @@ export const VehicleInsuranceCalculationPage: React.FC<VehicleInsuranceCalculati
       if (!res.ok) {
         throw new Error(data.error || `Chyba ${res.status}`);
       }
+      setLastRawResponse(data);
       const { offers, errors } = mapCarResponseToOffers(data);
       setLiveCarrierErrors(errors);
       if (!offers.length) {
@@ -568,14 +585,26 @@ export const VehicleInsuranceCalculationPage: React.FC<VehicleInsuranceCalculati
                 <span className="ml-2 align-middle text-xs font-medium text-success">● živá data</span>
               )}
             </h2>
-            <button
-              type="button"
-              onClick={loadLiveOffers}
-              disabled={liveLoading}
-              className="inline-flex items-center justify-center gap-2 rounded-lg border border-[#A82844] px-4 py-2 text-sm font-medium text-[#A82844] transition-colors hover:bg-brand-50 disabled:opacity-60"
-            >
-              {liveLoading ? 'Načítám z pojišťoven…' : 'Načíst živé nabídky'}
-            </button>
+            <div className="flex flex-wrap items-center gap-2">
+              {lastRawResponse !== null && (
+                <button
+                  type="button"
+                  onClick={copyRawJson}
+                  className="inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-xs font-medium text-foreground transition-colors hover:border-border-strong"
+                  title="Zkopíruje syrovou odpověď z /calculate (k poslání kolegovi do backendu)"
+                >
+                  {copyMsg ?? 'Zkopírovat JSON pro Toma'}
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={loadLiveOffers}
+                disabled={liveLoading}
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-[#A82844] px-4 py-2 text-sm font-medium text-[#A82844] transition-colors hover:bg-brand-50 disabled:opacity-60"
+              >
+                {liveLoading ? 'Načítám z pojišťoven…' : 'Načíst živé nabídky'}
+              </button>
+            </div>
           </div>
 
           {liveError && (
@@ -588,10 +617,26 @@ export const VehicleInsuranceCalculationPage: React.FC<VehicleInsuranceCalculati
           {liveCarrierErrors.length > 0 && (
             <div className="mb-4 rounded-lg border border-warning/30 bg-warning-bg px-4 py-3 text-sm text-warning">
               <div className="font-medium">Některé pojišťovny nevrátily cenu:</div>
-              <ul className="mt-1 space-y-0.5 text-xs">
+              <ul className="mt-2 space-y-2 text-xs">
                 {liveCarrierErrors.map((e) => (
-                  <li key={e.insurer}>
-                    <span className="font-semibold">{e.insurer}:</span> {e.message}
+                  <li key={e.insurer} className="rounded-md bg-surface/60 p-2">
+                    <div className="font-semibold">
+                      {e.insurer} <span className="font-normal text-muted">· {e.message} (kód {e.code})</span>
+                    </div>
+                    {e.details.length > 0 && (
+                      <ul className="mt-1 space-y-0.5 pl-4 text-foreground">
+                        {e.details.map((d, i) => (
+                          <li key={i} className="list-disc">
+                            {d.message || '—'}
+                            {Array.isArray(d.fields) && d.fields.filter(Boolean).length > 0 && (
+                              <span className="ml-1 text-muted">
+                                ({d.fields.filter(Boolean).join(', ')})
+                              </span>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </li>
                 ))}
               </ul>

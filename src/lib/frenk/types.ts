@@ -122,11 +122,17 @@ export interface FrenkInsuranceResult {
   warnings?: Record<string, string> | null;
 }
 
+/** Strukturovaná chyba z `errors[]` (skutečná hláška, případně dotčená pole). */
+export interface FrenkErrorDetail {
+  message?: string | null;
+  fields?: Array<string | null>;
+}
+
 /** Když carrier kalkulaci nevrátí, přijde pod jeho klíčem tento chybový tvar. */
 export interface FrenkInsuranceError {
   error: number;
   message: string;
-  errors?: unknown;
+  errors?: FrenkErrorDetail[] | unknown[];
 }
 
 export type FrenkInsuranceEntry = FrenkInsuranceResult | FrenkInsuranceError;

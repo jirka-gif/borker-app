@@ -5,11 +5,14 @@
  */
 
 import type { OfferCardData, OfferCoverage } from '../../shared/OfferCard';
-import { isFrenkError, type CarCalculateResponse } from '@/lib/frenk/types';
+import { isFrenkError, type CarCalculateResponse, type FrenkErrorDetail } from '@/lib/frenk/types';
 
 export interface CarrierError {
   insurer: string;
+  code: number;
   message: string;
+  /** Konkrétní hlášky z errors[] (validace polí, …). */
+  details: FrenkErrorDetail[];
 }
 
 export interface MappedOffers {
@@ -54,7 +57,15 @@ export function mapCarResponseToOffers(res: CarCalculateResponse): MappedOffers 
     const meta = CARRIERS[apiEnum] ?? { name: apiEnum, logo: '?' };
 
     if (isFrenkError(entry)) {
-      errors.push({ insurer: meta.name, message: entry.message || `Chyba ${entry.error}` });
+      const rawDetails = Array.isArray(entry.errors) ? entry.errors : [];
+      const details: FrenkErrorDetail[] = rawDetails
+        .filter((d): d is FrenkErrorDetail => typeof d === 'object' && d !== null);
+      errors.push({
+        insurer: meta.name,
+        code: entry.error,
+        message: entry.message || `Chyba ${entry.error}`,
+        details,
+      });
       continue;
     }
 
