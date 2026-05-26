@@ -27,10 +27,19 @@ export type CarApiEnum =
   | 'insurance-car-cpp'
   | 'insurance-car-allianz';
 
-/* --- Vstupní enumy (car) --- */
+/* --- Vstupní enumy (car) – zdroj pravdy: src/Api/Action/Insurance/Car/Enums v frenk.api --- */
 export type FrequencyEnum = 'single' | 'annually' | 'monthly' | 'quarterly' | 'semiannually';
 export type PaymentTypeEnum = 'card' | 'transfer' | 'cash';
 export type PersonTypeEnum = 'physical' | 'legal' | 'businessman' | 'foreigner';
+
+export type CarTypeEnum =
+  | 'passenger'
+  | 'truckTo3500kg'
+  | 'truckOver3500kg'
+  | 'motorcycle'
+  | 'bus'
+  | 'trailer';
+
 export type FuelTypeEnum =
   | 'benzine'
   | 'diesel'
@@ -39,8 +48,45 @@ export type FuelTypeEnum =
   | 'electricity'
   | 'hybrid_diesel'
   | 'hybrid_benzine'
+  | 'hybrid_hydrogenium'
   | 'benzine_lpg'
+  | 'diesel_lpg'
+  | 'benzine_cng'
+  | 'diesel_cng'
+  | 'hydrogenium'
   | 'other';
+
+export type CarUsageEnum =
+  | 'normal'
+  | 'commercial'
+  | 'taxi'
+  | 'drive_school'
+  | 'rental'
+  | 'agriculture';
+
+export type UsePurposeEnum =
+  | 'private'
+  | 'person'
+  | 'business'
+  | 'other'
+  | 'priority_car'
+  | 'ambulance'
+  | 'international'
+  | 'school'
+  | 'historical'
+  | 'dangerous_cargo'
+  | 'competition'
+  | 'transport';
+
+export type AssistanceLevelEnum = 'none' | 'S' | 'M' | 'L' | 'XL';
+
+export type SecurityItemEnum =
+  | 'alarm'
+  | 'immobiliser'
+  | 'active_search'
+  | 'passive_search'
+  | 'mechanic_security'
+  | 'window_sign';
 
 /* --- Car calculate input --- */
 export interface FrenkAddress {
@@ -68,8 +114,8 @@ export interface CarCalculateInput {
   endDate?: string;
   payment?: { frequency?: FrequencyEnum; paymentType?: PaymentTypeEnum };
   vehicle: {
-    usage: 'normal';
-    type?: 'passenger';
+    usage: CarUsageEnum;
+    type?: CarTypeEnum;
     fuelType: FuelTypeEnum;
     spz?: string;
     brand: string;
@@ -85,13 +131,14 @@ export interface CarCalculateInput {
     registrationCertificate?: string;
     expectedKm?: number | null;
     withoutVAT?: boolean | null;
+    usePurpose?: UsePurposeEnum;
   };
   liability: { selected: boolean; liabilityLimit: number };
   accident: {
     selected: boolean;
     complicityType?: number;
-    assistance?: string;
-    securityItems?: string[];
+    assistance?: AssistanceLevelEnum;
+    securityItems?: SecurityItemEnum[];
     participation?: string | null;
   };
   policyholder: FrenkPerson;

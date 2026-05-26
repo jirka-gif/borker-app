@@ -456,6 +456,7 @@ export function buildVehicleOffersHtml(d: VehicleOffersPdfData): string {
 <head>
 <meta charset="utf-8" />
 <title>Kompletní porovnání nabídek – pojištění vozidla</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
   :root {
     --brand-50: ${rgbVar(palette[50])};
@@ -519,15 +520,22 @@ export function buildVehicleOffersHtml(d: VehicleOffersPdfData): string {
   .page-break { page-break-before: always; }
 
   /* Tlačítko v rohu k tisku — vidí jen na obrazovce */
-  .print-btn { position: sticky; top: 0; float: right; margin: 0 0 10px 10px; background: var(--brand-600); color: #fff; border: 0; border-radius: 8px; padding: 8px 14px; font-size: 12px; font-weight: 600; cursor: pointer; }
+  .print-bar { display: flex; gap: 8px; align-items: center; margin: 0 0 14px; }
+  .print-btn { background: var(--brand-600); color: #fff; border: 0; border-radius: 8px; padding: 9px 16px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .print-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+  .print-status { font-size: 12px; color: var(--muted); }
   @media print { body { padding: 0; } .no-print { display: none !important; } }
 
   .foot { margin-top: 26px; font-size: 10px; color: var(--subtle); line-height: 1.5; }
 </style>
 </head>
 <body>
-  <button class="print-btn no-print" onclick="window.print()">Stáhnout / vytisknout PDF</button>
+  <div class="print-bar no-print">
+    <button id="dl-btn" class="print-btn" onclick="downloadPdf()">Stáhnout PDF</button>
+    <span id="dl-status" class="print-status">Připravuji PDF…</span>
+  </div>
 
+  <div id="pdf-content">
   <div class="brand-bar"></div>
   <div class="top">
     <h1>Kompletní porovnání nabídek</h1>
@@ -631,6 +639,41 @@ export function buildVehicleOffersHtml(d: VehicleOffersPdfData): string {
     vycházejí ze zadaných parametrů a po finálním ocenění pojišťovnou se mohou lišit. Tento přehled neslouží
     jako návrh na uzavření pojistné smlouvy. Kalkulace platná ke dni ${esc(validity)}.
   </div>
+  </div><!-- /#pdf-content -->
+
+  <script>
+    (function() {
+      const btn = document.getElementById('dl-btn');
+      const status = document.getElementById('dl-status');
+      window.downloadPdf = async function() {
+        if (typeof html2pdf === 'undefined') {
+          status.textContent = 'Knihovna PDF ještě nedoběhla, zkus prosím za chvíli znovu.';
+          return;
+        }
+        btn.disabled = true;
+        status.textContent = 'Generuji PDF…';
+        try {
+          await html2pdf().set({
+            margin: 8,
+            filename: 'kompletni-porovnani-nabidek.pdf',
+            image: { type: 'jpeg', quality: 0.95 },
+            html2canvas: { scale: 2, useCORS: true, letterRendering: true, backgroundColor: '#ffffff' },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak: { mode: ['css', 'legacy'], avoid: ['table', 'tr'] }
+          }).from(document.getElementById('pdf-content')).save();
+          status.textContent = 'Hotovo. PDF se uložilo do Stahování.';
+        } catch (e) {
+          status.textContent = 'Stažení selhalo, klikni znovu.';
+        } finally {
+          btn.disabled = false;
+        }
+      };
+      // Auto-spuštění po načtení knihovny (s krátkou rezervou na fonts).
+      window.addEventListener('load', function() {
+        setTimeout(window.downloadPdf, 600);
+      });
+    })();
+  </script>
 </body>
 </html>`;
 }

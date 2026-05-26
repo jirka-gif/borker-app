@@ -61,6 +61,28 @@ async function safeJson(res: Response): Promise<unknown> {
 }
 
 /**
+ * GET na Frenk API bez autentizace (veřejné endpointy: /car/brands, /car/vin).
+ */
+export async function frenkGetPublic<T>(path: string, query?: Record<string, string | number | undefined>): Promise<T> {
+  const qs = query
+    ? '?' +
+      Object.entries(query)
+        .filter(([, v]) => v !== undefined && v !== '')
+        .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(String(v))}`)
+        .join('&')
+    : '';
+  const res = await fetch(`${BASE_URL}${path}${qs}`, {
+    method: 'GET',
+    headers: { Accept: 'application/json' },
+    cache: 'no-store',
+  });
+  if (!res.ok) {
+    throw new FrenkError(`Frenk API ${path} vrátilo ${res.status}.`, res.status, await safeJson(res));
+  }
+  return (await res.json()) as T;
+}
+
+/**
  * Autentizovaný POST na Frenk API. Při 401 jednou obnoví token a zopakuje.
  */
 export async function frenkPost<T>(path: string, payload: unknown): Promise<T> {
