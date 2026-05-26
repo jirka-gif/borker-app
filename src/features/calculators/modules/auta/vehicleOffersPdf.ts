@@ -639,15 +639,19 @@ export function buildVehicleOffersHtml(d: VehicleOffersPdfData): string {
 
 export function openVehicleOffersPdf(data: VehicleOffersPdfData): void {
   const html = buildVehicleOffersHtml(data);
-  const blob = new Blob([html], { type: 'text/html' });
-  const url = URL.createObjectURL(blob);
-
-  const win = window.open(url, '_blank');
-  if (win) {
-    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  // Stejný osvědčený přístup jako u Záznamu z jednání: nové okno + document.write
+  // (Safari má s blob: URL u "Uložit jako PDF" potíže – ukládá prázdnou stránku).
+  const win = window.open('', '_blank');
+  if (!win) {
+    // Fallback: navigace v aktuální záložce přes data URL.
+    const dataUrl = 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
+    window.location.href = dataUrl;
     return;
   }
-  window.location.href = url;
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
+  win.focus();
 }
 
 /* ---------- Pomocník pro čtení aktuální brand barvy z CSS proměnných ---------- */
