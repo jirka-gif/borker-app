@@ -807,6 +807,16 @@ export const VehicleInsuranceCalculationPage: React.FC<VehicleInsuranceCalculati
             </button>
           </div>
         </div>
+
+        {/* Footer: navigace mezi kroky */}
+        <footer className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <SecondaryButton type="button" onClick={() => onStepChange?.(2)}>
+            Zpět na parametry
+          </SecondaryButton>
+          <PrimaryButton type="button" onClick={() => onStepChange?.(4)}>
+            Pokračovat na Záznam z jednání
+          </PrimaryButton>
+        </footer>
       </main>
 
       {/* Modal s detailem nabídky při hoveru */}
