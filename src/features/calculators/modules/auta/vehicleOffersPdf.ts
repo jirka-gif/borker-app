@@ -19,25 +19,95 @@ import { hexToPalette } from '@/features/admin/branding';
 /* ---------- Typy vstupních dat ---------- */
 
 export interface PdfCoverage {
-  /** např. "200/200 mil. Kč" */
+  /* Povinné ručení */
   povLimit?: string;
   povTerritory?: string;
+  povProductName?: string;
+
+  /* Havarijní pojištění */
   havProductName?: string;
   havDeductible?: string;
   havInsuredAmount?: string;
   havTerritory?: string;
+  havCoversAccident?: string;
+  havCoversTheft?: string;
+  havCoversVandalism?: string;
+  havCoversElement?: string;
+
+  /* Pojištění skel */
+  glassPremium?: string;
   glassLimit?: string;
   glassDeductible?: string;
   glassTerritory?: string;
+  glassCoversAccident?: string;
+  glassCoversElement?: string;
+
+  /* Pojištění zavazadel */
+  luggageStatus?: string; // "Riziko nepojištěno" / "V ceně"
+  luggagePremium?: string;
+  luggageLimit?: string;
+  luggageDeductible?: string;
+  luggageTerritory?: string;
+  luggageCoversTheft?: string;
+  luggageCoversVandalism?: string;
+  luggageCoversCrashLoss?: string;
+  luggageCoversImpact?: string;
+  luggageCoversWildlife?: string;
+  luggageItemsPersonal?: string;
+  luggageItemsRoofBox?: string;
+  luggageItemsCarrierMounted?: string;
+  luggageItemsChildSeat?: string;
+  luggageItemsExtraEquip?: string;
+  luggageItemsProfessional?: string;
+  luggageItemsTrailer?: string;
+  luggageIncludesAvTech?: string;
+  luggageIncludesAnimals?: string;
+  luggageIncludesFurCoats?: string;
+  luggageIncludesLeatherClothes?: string;
+  luggageIncludesWeapons?: string;
+  luggageIncludesTools?: string;
+  luggageIncludesVehicleParts?: string;
+  luggageIncludesWrongStorage?: string;
+  luggageIncludesVisibleItems?: string;
+  luggageIncludesNightTheft?: string;
+  luggageIncludesProfessionalUse?: string;
+  luggageIncludesExternalCarrierDamage?: string;
+
+  /* Úraz řidiče */
   driverAccidentPremium?: string;
   driverAccidentDeath?: string;
   driverAccidentDisability?: string;
   driverAccidentTerritory?: string;
+
+  /* Úraz osob ve vozidle (vč. řidiče) */
   passengersAccidentPremium?: string;
   passengersAccidentDeath?: string;
   passengersAccidentDisability?: string;
   passengersAccidentTerritory?: string;
+
+  /* Asistenční služby */
+  assistanceProductName?: string;
   assistanceLevel?: string;
+  assistanceRepairCz?: string;
+  assistanceRepairAbroad?: string;
+  assistanceReplacementVehicleCz?: string;
+  assistanceReplacementVehicleAbroad?: string;
+  assistanceLodgingCz?: string;
+  assistanceLodgingAbroad?: string;
+  assistanceTransportCz?: string;
+  assistanceTransportAbroad?: string;
+  assistanceTowingCz?: string;
+  assistanceTowingAbroad?: string;
+
+  /* Další doplňková pojištění */
+  addonName?: string;
+  addonLimit?: string;
+  addonPremium?: string;
+
+  /* Specifické benefity */
+  specificBenefits?: string;
+
+  /* Souhrn */
   mileageLabel?: string;
 }
 
@@ -154,6 +224,16 @@ function allEmpty(offers: PdfVehicleOffer[], resolve: (o: PdfVehicleOffer) => st
   return offers.every((o) => !resolve(o));
 }
 
+/** Podhlavička přes celou šířku tabulky (např. „Krytí", „Předmět pojištění"). */
+function subhead(label: string, totalCols: number): string {
+  return `<tr class="subhead"><th colspan="${totalCols + 1}">${esc(label)}</th></tr>`;
+}
+
+/** Plnohodnotný odstavec textu přes celou šířku (např. „Standardní výluky"). */
+function paragraphRow(label: string, text: string, totalCols: number): string {
+  return `<tr class="paragraph"><th>${esc(label)}</th><td colspan="${totalCols}">${esc(text)}</td></tr>`;
+}
+
 /* ---------- Build HTML ---------- */
 
 export function buildVehicleOffersHtml(d: VehicleOffersPdfData): string {
@@ -197,19 +277,21 @@ export function buildVehicleOffersHtml(d: VehicleOffersPdfData): string {
       : ''}
   `;
 
-  // Detail Povinné ručení
+  const N = offers.length;
+
+  // -- Detail: Povinné ručení
   const povTable = `
     <table class="detail">
       ${tableHeader(offers)}
       <tbody>
         ${row('Pojistné (ročně)', offers, (o) => (o.pricePov != null ? esc(czk(o.pricePov)) : dash(undefined)))}
-        ${row('Produkt', offers, (o) => dash(o.productName))}
+        ${row('Produkt', offers, (o) => dash(o.coverage?.povProductName || o.productName))}
         ${row('Limit plnění', offers, (o) => dash(o.coverage?.povLimit))}
         ${row('Územní platnost', offers, (o) => dash(o.coverage?.povTerritory))}
       </tbody>
     </table>`;
 
-  // Detail Havarijní pojištění
+  // -- Detail: Havarijní pojištění (s Krytí)
   const havTable = `
     <table class="detail">
       ${tableHeader(offers)}
@@ -219,82 +301,155 @@ export function buildVehicleOffersHtml(d: VehicleOffersPdfData): string {
         ${row('Spoluúčast', offers, (o) => dash(o.coverage?.havDeductible))}
         ${row('Pojistná částka', offers, (o) => dash(o.coverage?.havInsuredAmount))}
         ${row('Územní platnost', offers, (o) => dash(o.coverage?.havTerritory))}
+        ${subhead('Krytí', N)}
+        ${row('Havárie', offers, (o) => dash(o.coverage?.havCoversAccident))}
+        ${row('Odcizení', offers, (o) => dash(o.coverage?.havCoversTheft))}
+        ${row('Vandalismus', offers, (o) => dash(o.coverage?.havCoversVandalism))}
+        ${row('Živel', offers, (o) => dash(o.coverage?.havCoversElement))}
       </tbody>
     </table>`;
 
-  // Připojištění — Skla
-  const glassSection = allEmpty(offers, (o) => o.coverage?.glassLimit)
-    ? ''
-    : `
-      <h3>Pojištění skel</h3>
-      <table class="detail">
-        ${tableHeader(offers)}
-        <tbody>
-          ${row('Limit', offers, (o) => dash(o.coverage?.glassLimit))}
-          ${row('Spoluúčast', offers, (o) => dash(o.coverage?.glassDeductible))}
-          ${row('Územní platnost', offers, (o) => dash(o.coverage?.glassTerritory))}
-        </tbody>
-      </table>`;
+  // -- Připojištění: Skla
+  const glassSection = `
+    <h3>Pojištění skel</h3>
+    <table class="detail">
+      ${tableHeader(offers)}
+      <tbody>
+        ${row('Lhůtní pojistné', offers, (o) => dash(o.coverage?.glassPremium))}
+        ${row('Limit', offers, (o) => dash(o.coverage?.glassLimit))}
+        ${row('Spoluúčast', offers, (o) => dash(o.coverage?.glassDeductible))}
+        ${row('Územní platnost', offers, (o) => dash(o.coverage?.glassTerritory))}
+        ${subhead('Krytí', N)}
+        ${row('Dopravní nehoda', offers, (o) => dash(o.coverage?.glassCoversAccident))}
+        ${row('Živel', offers, (o) => dash(o.coverage?.glassCoversElement))}
+      </tbody>
+    </table>`;
 
-  // Připojištění — Asistence
-  const assistanceSection = allEmpty(offers, (o) => o.coverage?.assistanceLevel)
-    ? ''
-    : `
-      <h3>Asistenční služby</h3>
-      <table class="detail">
-        ${tableHeader(offers)}
-        <tbody>
-          ${row('Úroveň asistence', offers, (o) => dash(o.coverage?.assistanceLevel))}
-        </tbody>
-      </table>`;
+  // -- Připojištění: Zavazadla (rozsáhlá sekce)
+  const STANDARD_LUGGAGE_EXCLUSIONS =
+    'Peníze, ceniny, cenné papíry a směnky, vkladní a šekové knížky, platební a jiné karty, osobní doklady všeho druhu, letenky apod. včetně nákladů spojených s jejich znovupořízením, drahé kovy a kameny a předměty z nich, šperky, perly, polodrahokamy, písemnosti, plány, jiná dokumentace, umělecká díla, zvláštní kulturní a historické hodnoty, starožitnosti, sbírky a věci sběratelského zájmu.';
 
-  // Připojištění — Úraz řidiče
-  const driverAccidentSection = allEmpty(
-    offers,
-    (o) =>
-      o.coverage?.driverAccidentDeath ||
-      o.coverage?.driverAccidentDisability ||
-      o.coverage?.driverAccidentPremium,
-  )
-    ? ''
-    : `
-      <h3>Pojištění úrazu řidiče</h3>
-      <table class="detail">
-        ${tableHeader(offers)}
-        <tbody>
-          ${row('Lhůtní pojistné', offers, (o) => dash(o.coverage?.driverAccidentPremium))}
-          ${row('Pojistná částka pro smrt úrazem', offers, (o) => dash(o.coverage?.driverAccidentDeath))}
-          ${row('Pojistná částka pro trvalé následky', offers, (o) =>
-            dash(o.coverage?.driverAccidentDisability),
-          )}
-          ${row('Územní platnost', offers, (o) => dash(o.coverage?.driverAccidentTerritory))}
-        </tbody>
-      </table>`;
+  const luggageSection = `
+    <h3>Pojištění zavazadel</h3>
+    <table class="detail">
+      ${tableHeader(offers)}
+      <tbody>
+        ${row('Stav', offers, (o) => dash(o.coverage?.luggageStatus || 'Riziko nepojištěno'))}
+        ${row('Lhůtní pojistné', offers, (o) => dash(o.coverage?.luggagePremium))}
+        ${row('Limit', offers, (o) => dash(o.coverage?.luggageLimit))}
+        ${row('Spoluúčast', offers, (o) => dash(o.coverage?.luggageDeductible))}
+        ${row('Územní platnost', offers, (o) => dash(o.coverage?.luggageTerritory))}
+        ${subhead('Krytí', N)}
+        ${row('Odcizení', offers, (o) => dash(o.coverage?.luggageCoversTheft))}
+        ${row('Vandalismus', offers, (o) => dash(o.coverage?.luggageCoversVandalism))}
+        ${row('Ztráta při dopravní nehodě', offers, (o) => dash(o.coverage?.luggageCoversCrashLoss))}
+        ${row('Pád či náraz věci', offers, (o) => dash(o.coverage?.luggageCoversImpact))}
+        ${row('Srážka se zvěří', offers, (o) => dash(o.coverage?.luggageCoversWildlife))}
+        ${subhead('Předmět pojištění', N)}
+        ${row('Zavazadla a osobní věci cestujících ve vozidle', offers, (o) => dash(o.coverage?.luggageItemsPersonal))}
+        ${row('Věci ve střešním boxu', offers, (o) => dash(o.coverage?.luggageItemsRoofBox))}
+        ${row('Věci upevněné na nosiči vozidla', offers, (o) => dash(o.coverage?.luggageItemsCarrierMounted))}
+        ${row('Dětská autosedačka', offers, (o) => dash(o.coverage?.luggageItemsChildSeat))}
+        ${row('Dodatečná výbava vozidla v PS', offers, (o) => dash(o.coverage?.luggageItemsExtraEquip))}
+        ${row('Přístroje pro výkon povolání', offers, (o) => dash(o.coverage?.luggageItemsProfessional))}
+        ${row('Věci v přívěsném vozíku', offers, (o) => dash(o.coverage?.luggageItemsTrailer))}
+        ${paragraphRow('Standardní výluky', STANDARD_LUGGAGE_EXCLUSIONS, N)}
+        ${subhead('Je v rámci pojištění kryto následující?', N)}
+        ${row('Audiovizuální technika a výpočetní technika', offers, (o) => dash(o.coverage?.luggageIncludesAvTech))}
+        ${row('Zvířata', offers, (o) => dash(o.coverage?.luggageIncludesAnimals))}
+        ${row('Kožichy', offers, (o) => dash(o.coverage?.luggageIncludesFurCoats))}
+        ${row('Kožené oděvní svršky', offers, (o) => dash(o.coverage?.luggageIncludesLeatherClothes))}
+        ${row('Zbraně, střelivo, příslušenství a náhradní díly', offers, (o) => dash(o.coverage?.luggageIncludesWeapons))}
+        ${row('Nářadí, nástroje, přístroje', offers, (o) => dash(o.coverage?.luggageIncludesTools))}
+        ${row('Příslušenství, vybavení a náhradní díly vozidel', offers, (o) => dash(o.coverage?.luggageIncludesVehicleParts))}
+        ${row('Nesprávné uložení a následné škody', offers, (o) => dash(o.coverage?.luggageIncludesWrongStorage))}
+        ${row('Věci zvenčí viditelné nebo patrné (mimo dětské autosedačky)', offers, (o) => dash(o.coverage?.luggageIncludesVisibleItems))}
+        ${row('Odcizení mezi 22. a 6. hodinou', offers, (o) => dash(o.coverage?.luggageIncludesNightTheft))}
+        ${row('Věci sloužící k výkonu povolání / podnikání', offers, (o) => dash(o.coverage?.luggageIncludesProfessionalUse))}
+        ${row('Poškození zavazadel na vnějším nosiči živlem', offers, (o) => dash(o.coverage?.luggageIncludesExternalCarrierDamage))}
+      </tbody>
+    </table>`;
 
-  // Připojištění — Úraz všech osob ve vozidle
-  const passengersSection = allEmpty(
-    offers,
-    (o) =>
-      o.coverage?.passengersAccidentDeath ||
-      o.coverage?.passengersAccidentDisability ||
-      o.coverage?.passengersAccidentPremium,
-  )
-    ? ''
-    : `
-      <h3>Úraz osob ve vozidle</h3>
-      <table class="detail">
-        ${tableHeader(offers)}
-        <tbody>
-          ${row('Lhůtní pojistné', offers, (o) => dash(o.coverage?.passengersAccidentPremium))}
-          ${row('Pojistná částka pro smrt úrazem', offers, (o) =>
-            dash(o.coverage?.passengersAccidentDeath),
-          )}
-          ${row('Pojistná částka pro trvalé následky', offers, (o) =>
-            dash(o.coverage?.passengersAccidentDisability),
-          )}
-          ${row('Územní platnost', offers, (o) => dash(o.coverage?.passengersAccidentTerritory))}
-        </tbody>
-      </table>`;
+  // -- Připojištění: Úraz řidiče
+  const driverAccidentSection = `
+    <h3>Pojištění úrazu řidiče</h3>
+    <table class="detail">
+      ${tableHeader(offers)}
+      <tbody>
+        ${row('Lhůtní pojistné', offers, (o) => dash(o.coverage?.driverAccidentPremium))}
+        ${row('Pojistná částka pro smrt úrazem', offers, (o) => dash(o.coverage?.driverAccidentDeath))}
+        ${row('Pojistná částka pro trvalé následky / invaliditu', offers, (o) =>
+          dash(o.coverage?.driverAccidentDisability),
+        )}
+        ${row('Územní platnost', offers, (o) => dash(o.coverage?.driverAccidentTerritory))}
+      </tbody>
+    </table>`;
+
+  // -- Připojištění: Úraz osob ve vozidle (vč. řidiče)
+  const passengersSection = `
+    <h3>Úraz všech osob ve vozidle (včetně řidiče)</h3>
+    <table class="detail">
+      ${tableHeader(offers)}
+      <tbody>
+        ${row('Lhůtní pojistné', offers, (o) => dash(o.coverage?.passengersAccidentPremium))}
+        ${row('Pojistná částka pro smrt úrazem', offers, (o) =>
+          dash(o.coverage?.passengersAccidentDeath),
+        )}
+        ${row('Pojistná částka pro trvalé následky / invaliditu', offers, (o) =>
+          dash(o.coverage?.passengersAccidentDisability),
+        )}
+        ${row('Územní platnost', offers, (o) => dash(o.coverage?.passengersAccidentTerritory))}
+      </tbody>
+    </table>`;
+
+  // -- Asistenční služby (v ČR / v zahraničí dvojice)
+  const assistanceSection = `
+    <h2>Asistenční služby</h2>
+    <table class="detail">
+      ${tableHeader(offers, 'Atribut')}
+      <tbody>
+        ${row('Asistence (produkt)', offers, (o) =>
+          dash(o.coverage?.assistanceProductName || o.coverage?.assistanceLevel),
+        )}
+        ${subhead('Limity opravy na místě', N)}
+        ${row('v ČR', offers, (o) => dash(o.coverage?.assistanceRepairCz))}
+        ${row('v zahraničí', offers, (o) => dash(o.coverage?.assistanceRepairAbroad))}
+        ${subhead('Limity vyproštění vozidla', N)}
+        ${row('v ČR', offers, (o) => dash(o.coverage?.assistanceTowingCz))}
+        ${row('v zahraničí', offers, (o) => dash(o.coverage?.assistanceTowingAbroad))}
+        ${subhead('Náhradní vozidlo při nehodě', N)}
+        ${row('v ČR', offers, (o) => dash(o.coverage?.assistanceReplacementVehicleCz))}
+        ${row('v zahraničí', offers, (o) => dash(o.coverage?.assistanceReplacementVehicleAbroad))}
+        ${subhead('Náhradní ubytování', N)}
+        ${row('v ČR', offers, (o) => dash(o.coverage?.assistanceLodgingCz))}
+        ${row('v zahraničí', offers, (o) => dash(o.coverage?.assistanceLodgingAbroad))}
+        ${subhead('Náhradní doprava', N)}
+        ${row('v ČR', offers, (o) => dash(o.coverage?.assistanceTransportCz))}
+        ${row('v zahraničí', offers, (o) => dash(o.coverage?.assistanceTransportAbroad))}
+      </tbody>
+    </table>`;
+
+  // -- Další doplňková pojištění
+  const addonsSection = `
+    <h2>Další doplňková pojištění</h2>
+    <table class="detail">
+      ${tableHeader(offers)}
+      <tbody>
+        ${row('Název pojištění', offers, (o) => dash(o.coverage?.addonName))}
+        ${row('Limit', offers, (o) => dash(o.coverage?.addonLimit))}
+        ${row('Lhůtní pojistné', offers, (o) => dash(o.coverage?.addonPremium))}
+      </tbody>
+    </table>`;
+
+  // -- Specifické benefity produktů
+  const benefitsSection = `
+    <h2>Specifické benefity produktů</h2>
+    <table class="detail">
+      ${tableHeader(offers)}
+      <tbody>
+        ${row('Popis', offers, (o) => dash(o.coverage?.specificBenefits))}
+      </tbody>
+    </table>`;
 
   return `<!doctype html>
 <html lang="cs">
@@ -355,6 +510,8 @@ export function buildVehicleOffersHtml(d: VehicleOffersPdfData): string {
   table.summary tr.total th, table.summary tr.total td { font-size: 13px; }
   table.summary tr.discount-row td { color: var(--brand-700); }
   table.detail { margin-bottom: 14px; }
+  table .subhead th { background: var(--brand-50); color: var(--brand-700); text-transform: uppercase; letter-spacing: 0.04em; font-size: 10px; }
+  table .paragraph td { color: var(--muted); font-size: 10.5px; line-height: 1.4; }
   .muted { color: var(--muted); }
   .pill { display: inline-block; padding: 2px 8px; background: var(--brand-50); color: var(--brand-700); border-radius: 999px; font-weight: 700; font-size: 10.5px; }
 
@@ -452,11 +609,22 @@ export function buildVehicleOffersHtml(d: VehicleOffersPdfData): string {
   ${havTable}
 
   <!-- PŘIPOJIŠTĚNÍ -->
-  ${glassSection || assistanceSection || driverAccidentSection || passengersSection ? '<h2>Připojištění</h2>' : ''}
+  <div class="page-break"></div>
+  <h2>Připojištění</h2>
   ${glassSection}
-  ${assistanceSection}
+  ${luggageSection}
   ${driverAccidentSection}
   ${passengersSection}
+
+  <!-- ASISTENČNÍ SLUŽBY -->
+  <div class="page-break"></div>
+  ${assistanceSection}
+
+  <!-- DALŠÍ DOPLŇKOVÁ POJIŠTĚNÍ -->
+  ${addonsSection}
+
+  <!-- SPECIFICKÉ BENEFITY -->
+  ${benefitsSection}
 
   <div class="foot">
     Dokument je orientačním přehledem zpracovaným zprostředkovatelem ${esc(d.broker.companyName)}. Ceny jsou roční,
