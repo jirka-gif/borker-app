@@ -6,6 +6,12 @@ import { VehicleInsuranceAdditionalPage } from './VehicleInsuranceAdditionalPage
 import { OfferCard, type OfferCardData } from '../../../shared/OfferCard';
 import { mapCarResponseToOffers } from '../frenkAdapter';
 import type { CarApiEnum, CarCalculateInput, CarCalculateResponse } from '@/lib/frenk/types';
+import {
+  openVehicleOffersPdf,
+  readBrandHexFromCssVar,
+  type PdfVehicleOffer,
+} from '../vehicleOffersPdf';
+import { INTERMEDIARY } from '@/config/intermediary';
 
 // Standardní sada připojištění (v reálu vrací API pojišťovny).
 const STANDARD_ADDONS = [
@@ -129,6 +135,61 @@ export const VehicleInsuranceCalculationPage: React.FC<VehicleInsuranceCalculati
       setCopyMsg('Kopírování selhalo');
       setTimeout(() => setCopyMsg(null), 2500);
     }
+  };
+
+  // Sestaví data pro PDF "Kompletní porovnání nabídek" a otevře tiskové okno.
+  const handleDownloadPdf = () => {
+    const offersForPdf: PdfVehicleOffer[] = displayedOffers.map((o) => {
+      const find = (k: string) => o.coverages.find((c) => c.key === k)?.value ?? undefined;
+      const discount = discountFor(o.id);
+      const final = Math.round(o.totalPrice * (1 - discount / 100));
+      return {
+        id: o.id,
+        insurer: o.insurer,
+        productName: o.productName,
+        totalPrice: o.totalPrice,
+        discountPercent: discount || undefined,
+        finalPrice: final,
+        addonsLabel: 'Započítáno do celkového pojistného',
+        coverage: {
+          povLimit: find('pov') || undefined,
+          havDeductible: find('hav') || undefined,
+          assistanceLevel: find('asist') || undefined,
+          glassLimit: find('sklo') || undefined,
+          mileageLabel: find('najezd') || undefined,
+        },
+      };
+    });
+
+    openVehicleOffersPdf({
+      brandColor: readBrandHexFromCssVar(),
+      broker: {
+        companyName: INTERMEDIARY.companyName,
+        phone: INTERMEDIARY.phone,
+        email: INTERMEDIARY.email,
+      },
+      advisor: {
+        name: processedBy,
+        email: processedByEmail,
+      },
+      client: {
+        name: clientName,
+        address: clientAddress,
+        role: 'Pojistník',
+      },
+      vehicle: {
+        title: vehicleInfo,
+        vin,
+        value: vehicleValue,
+      },
+      requirements: {
+        liabilityLimit: '200/200 mil. Kč',
+        deductible: '—',
+        startDate: insuranceStartDate,
+        frequency: 'Roční',
+      },
+      offers: offersForPdf,
+    });
   };
 
   // Reálné volání BFF. Vstup je zatím ukázkový (mapování polí z formuláře je další krok).
@@ -739,6 +800,7 @@ export const VehicleInsuranceCalculationPage: React.FC<VehicleInsuranceCalculati
             </button>
             <button
               type="button"
+              onClick={handleDownloadPdf}
               className="px-4 py-2.5 border border-[#A82844] text-[#A82844] rounded-lg hover:bg-brand-50 transition-colors text-sm font-medium whitespace-nowrap sm:min-w-[160px]"
             >
               Stáhnout PDF
