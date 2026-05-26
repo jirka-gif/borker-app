@@ -138,8 +138,9 @@ export const VehicleInsuranceCalculationPage: React.FC<VehicleInsuranceCalculati
   };
 
   // Sestaví data pro PDF "Kompletní porovnání nabídek" a otevře tiskové okno.
+  // Zobrazujeme 5 sloupců: 3 detailní karty + 2 nejlevnější z grafu porovnání.
   const handleDownloadPdf = () => {
-    const offersForPdf: PdfVehicleOffer[] = displayedOffers.map((o) => {
+    const detailedForPdf: PdfVehicleOffer[] = displayedOffers.map((o) => {
       const find = (k: string) => o.coverages.find((c) => c.key === k)?.value ?? undefined;
       const discount = discountFor(o.id);
       const final = Math.round(o.totalPrice * (1 - discount / 100));
@@ -160,6 +161,27 @@ export const VehicleInsuranceCalculationPage: React.FC<VehicleInsuranceCalculati
         },
       };
     });
+
+    // Dvě nejlevnější z grafu, které ještě nejsou mezi detailními kartami.
+    const usedInsurers = new Set(detailedForPdf.map((o) => o.insurer.toLowerCase()));
+    const seen = new Set<string>();
+    const candidates = allOffers.filter((co) => {
+      const key = co.insurer.toLowerCase();
+      if (usedInsurers.has(key) || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+    candidates.sort((a, b) => a.price - b.price);
+    const extras: PdfVehicleOffer[] = candidates.slice(0, 2).map((co, i) => ({
+      id: `chart-${co.insurer}-${i}`,
+      insurer: co.insurer,
+      productName: 'Pojištění vozidla',
+      totalPrice: co.price,
+      finalPrice: co.price,
+      addonsLabel: 'Započítáno do celkového pojistného',
+    }));
+
+    const offersForPdf = [...detailedForPdf, ...extras];
 
     openVehicleOffersPdf({
       brandColor: readBrandHexFromCssVar(),

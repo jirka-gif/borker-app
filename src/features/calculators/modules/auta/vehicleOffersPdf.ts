@@ -501,9 +501,9 @@ export function buildVehicleOffersHtml(d: VehicleOffersPdfData): string {
   .req-box .v { font-size: 12px; font-weight: 700; margin-top: 2px; }
 
   /* Tabulky */
-  table { width: 100%; border-collapse: collapse; font-size: 11px; page-break-inside: avoid; }
-  table th, table td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
-  table thead th { background: var(--brand-600); color: #fff; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; font-size: 10px; }
+  table { width: 100%; border-collapse: collapse; font-size: 10.5px; page-break-inside: avoid; table-layout: fixed; }
+  table th, table td { border: 1px solid var(--line); padding: 5px 6px; text-align: left; vertical-align: top; word-wrap: break-word; }
+  table thead th { background: var(--brand-600); color: #fff; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; font-size: 9.5px; }
   table tbody th { background: var(--soft); color: var(--ink); font-weight: 600; }
   table.summary td { font-weight: 600; }
   table.summary tr.total { background: var(--brand-50); }
