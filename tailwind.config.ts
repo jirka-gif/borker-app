@@ -57,26 +57,32 @@ const config: Config = {
         "accent-mint": "rgb(var(--accent-mint) / <alpha-value>)",
       },
       borderRadius: {
-        lg: "12px",
-        xl: "16px",
-        "2xl": "20px",
-        "3xl": "28px",
+        // Sjednoceno s design preview – ostřejší, profesionálnější geometrie.
+        sm: "4px",
+        DEFAULT: "6px",
+        md: "8px",
+        lg: "10px",
+        xl: "12px",
+        "2xl": "16px",
+        "3xl": "20px",
       },
       boxShadow: {
-        soft: "0 1px 2px 0 rgb(15 23 42 / 0.04), 0 1px 3px 0 rgb(15 23 42 / 0.06)",
-        card: "0 1px 2px rgb(15 23 42 / 0.04), 0 4px 16px -4px rgb(15 23 42 / 0.08)",
+        // Minimální stíny – spíš jako tenká linka než hluboké stíny.
+        soft: "0 1px 2px rgb(15 16 20 / 0.04)",
+        card: "0 1px 2px rgb(15 16 20 / 0.04), 0 0 0 1px rgb(var(--border))",
         "card-hover":
-          "0 4px 8px -2px rgb(15 23 42 / 0.06), 0 12px 28px -6px rgb(15 23 42 / 0.14)",
-        "card-brand":
-          "0 8px 24px -10px rgb(var(--brand-600) / 0.25)",
+          "0 1px 2px rgb(15 16 20 / 0.06), 0 8px 24px -8px rgb(15 16 20 / 0.18)",
+        "card-brand": "0 0 0 1px rgb(var(--brand-600) / 0.4)",
         popover:
-          "0 8px 24px -6px rgb(15 23 42 / 0.16), 0 2px 6px rgb(15 23 42 / 0.08)",
-        focus: "0 0 0 3px rgb(var(--ring) / 0.35)",
+          "0 1px 2px rgb(15 16 20 / 0.06), 0 8px 24px -8px rgb(15 16 20 / 0.18), 0 0 0 1px rgb(var(--border))",
+        focus: "0 0 0 3px rgb(var(--ring) / 0.25)",
         "btn-primary":
-          "inset 0 1px 0 rgb(255 255 255 / 0.15), 0 4px 12px -2px rgb(var(--brand-600) / 0.35)",
+          "inset 0 1px 0 rgb(255 255 255 / 0.10), 0 1px 2px rgb(var(--brand-700) / 0.30)",
       },
       fontFamily: {
         sans: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
+        serif: ["var(--font-serif)", "Georgia", "Times New Roman", "serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "SFMono-Regular", "monospace"],
       },
       fontSize: {
         "2xs": ["0.6875rem", { lineHeight: "1rem" }],
