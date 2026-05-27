@@ -1,3 +1,8 @@
+/* Design system z Claude Design preview – třídy .input, .select, .btn, .segctl, .fgrid, .calc-step, …
+   @import musí být před @tailwind dle CSS spec. */
+@import "../styles/design/base.css";
+@import "../styles/design/calculators.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
